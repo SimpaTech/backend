@@ -1,11 +1,12 @@
-const { Usuario } = require ("../entities/Usuario");
-
-const bcrypt = require('bcryptjs')
+import{ Usuario } from "../entities/Usuario";
+import { adicionarUsuario } from '../services/UsuarioServices';
 
 class UsuarioController {
 
-    static async cadastrarUsuario(req, res) {
-        const data = req.body;
+    async cadastrarUsuario(req, res) {
+
+        try {
+            const data = req.body;
 
         if (!data.Nome_Usuario) {
             return res.json({ message: "Digite um nome..." }).status(500)
@@ -32,16 +33,9 @@ class UsuarioController {
             return res.json({ message: "Já existe um usuário com este CPF"}).status(500);
         }
 
-        const senhaCriptografada = bcrypt.hashSync(data.Senha, 10);
+        const novaUsuario = adicionarUsuario(data.Nome_Usuario, data.CPF_Usuario, data.Role, data.Senha);
+        return res.status(200).json({ message: "Cadastrado com sucesso" });
 
-        try {
-            await Usuario.create({
-                Nome_Usuario: data.Nome_Usuario,
-                CPF_Usuario: data.CPF_Usuario,
-                Senha: senhaCriptografada, // Salvar a senha criptografada
-                Role: data.Role
-            }).save();
-            return res.status(200).json({ message: "Cadastrado com sucesso" });
         } catch(error) {
             return res.status(500).json({ error: error.message });
         }

@@ -1,7 +1,8 @@
-const router = require('express').Router()
+import { Router } from "express";
+import  UsuarioController  from '../controllers/UsuarioController';
 
-const UsuarioController = require('../controllers/UsuarioController')
+const routes = Router();
 
-router.post('/cadastrarUsuario', UsuarioController.cadastrarUsuario)
+routes.post("/cadastrarUsuario", UsuarioController.cadastrarUsuario)
 
-export default router;
+export default routes;
