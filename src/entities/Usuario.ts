@@ -12,7 +12,7 @@ export class Usuario {
     CPF_Usuario: string;
 
     @Column()
-    Token!: string;
+    Role: string;
 
     @Column()
     Senha: string;
