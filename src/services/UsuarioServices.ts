@@ -16,4 +16,19 @@ async function adicionarUsuario(Nome_Usuario: string, CPF_Usuario: string, Role:
     return await usuarioRepository.save(usuario);
 }
 
-export { adicionarUsuario };
+async function listarTodosUsuarios() {
+    const usuarioRepository = SqlDataSource.getRepository(Usuario);
+    return await usuarioRepository.find();
+}
+
+async function procurarUsuario(CPF_Usuario) {
+    const usuarioRepository = SqlDataSource.getRepository(Usuario);
+    return await usuarioRepository.findOne({ where: { CPF_Usuario } });
+}
+
+async function procurarUsuarioPorId(id) {
+    const usuarioRepository = SqlDataSource.getRepository(Usuario);
+    return await usuarioRepository.findOne({ where: { ID_Usuario: id } })
+}
+
+export { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId };
