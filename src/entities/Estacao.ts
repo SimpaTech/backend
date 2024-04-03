@@ -7,7 +7,7 @@ export class Estacao {
     ID_Estacao: number;
 
     @Column({ unique: true })
-    UID: number;
+    UID: string;
 
     @Column()
     Nome: string;
