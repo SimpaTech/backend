@@ -124,14 +124,18 @@ async function loginUsuario(data: { CPF_Usuario: string, Senha: string }) {
     };
 }
 
-async function logoutUsuario(id_usuario: number) {
-    // Remover o token do registro do usuário
-    const usuario = await Usuario.findOne({ where: { ID_Usuario: id_usuario } });
-    if (usuario) {
-        usuario.Token = '';
-        await usuario.save();
+async function logoutUsuario(id) {
+    try{
+        const usuario = await Usuario.findOne({ where: { ID_Usuario: id } });
+        if (usuario) {
+            usuario.Token = null;
+            await usuario.save();
+        }
+        return "Logout realizado com sucesso!";
+    } catch (error) {
+        throw new Error("Erro ao fazer logout do usuário: " + error.message);
     }
-    return "Logout realizado com sucesso!";
+    
 }
 
 function generateTokenId() {
@@ -146,6 +150,16 @@ async function obterInformacoesUsuario(token) {
             throw new Error('Token não fornecido');
         }
 
+        const usuario = await Usuario.findOne({ where: { Token: token } });
+
+        if (!usuario) {
+            throw new Error('Usuário não encontrado');
+        }
+
+        if (!usuario.Token) {
+            throw new Error('Token não encontrado');
+        }
+
         // Verifica se o token é válido e decodifica suas informações
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -156,11 +170,12 @@ async function obterInformacoesUsuario(token) {
 
         console.log(decoded)
 
-        // Busca o usuário no banco de dados usando o ID decodificado
-        const usuario = await Usuario.findOne({ where: { ID_Usuario: decoded.id_usuario } });
-
         if (!usuario) {
             throw new Error('Usuário não encontrado no banco de dados');
+        }
+
+        if (!usuario.Token) {
+            throw new Error('Token não encontrado');
         }
 
         return usuario;
@@ -169,4 +184,4 @@ async function obterInformacoesUsuario(token) {
     }
 }
 
-export { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario, loginUsuario, obterInformacoesUsuario };
+export { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario, loginUsuario, obterInformacoesUsuario, logoutUsuario };

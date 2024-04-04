@@ -1,5 +1,5 @@
 import{ Usuario } from "../entities/Usuario";
-import { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario, loginUsuario, obterInformacoesUsuario } from '../services/UsuarioServices';
+import { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario, loginUsuario, obterInformacoesUsuario, logoutUsuario } from '../services/UsuarioServices';
 
 class UsuarioController {
 
@@ -127,6 +127,17 @@ class UsuarioController {
             }
     
             return res.json(usuario);
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async logout(req, res) {
+        try {
+            const id = req.params.id;
+    
+            const mensagem = await logoutUsuario(parseInt(id));
+            return res.status(200).json({ message: mensagem });
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
