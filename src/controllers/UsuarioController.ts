@@ -1,5 +1,5 @@
 import{ Usuario } from "../entities/Usuario";
-import { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId } from '../services/UsuarioServices';
+import { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario } from '../services/UsuarioServices';
 
 class UsuarioController {
 
@@ -73,6 +73,18 @@ class UsuarioController {
             } else {
                 return res.json(usuario).status(200);
             }
+        } catch(error) {
+            return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async editarUsuario(req, res) {
+        try {
+            const id = req.params.id
+            const data = req.body
+
+            const usuarioAtualizado = await atualizarUsuario(id, data);
+            return res.status(200).json({ message: "Usuário atualizado com sucesso!", usuario: usuarioAtualizado });
         } catch(error) {
             return res.status(500).json({ error: error.message });
         }

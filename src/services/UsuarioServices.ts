@@ -31,4 +31,31 @@ async function procurarUsuarioPorId(id) {
     return await usuarioRepository.findOne({ where: { ID_Usuario: id } })
 }
 
-export { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId };
+async function atualizarUsuario(id, data) {
+    const usuarioRepository = SqlDataSource.getRepository(Usuario)
+    const usuario = await usuarioRepository.findOne({ where: { ID_Usuario: id } });
+
+    if (!usuario) {
+        throw new Error("Usuário não encontrado!");
+    }
+
+    if (data.Nome_Usuario !== undefined && data.Nome_Usuario !== "") {
+        usuario.Nome_Usuario = data.Nome_Usuario;
+    }
+
+    if (data.Role !== undefined) {
+        usuario.Role = data.Role;
+    }
+
+    if (data.Senha !== undefined) {
+        const senhaCriptografada = bcrypt.hashSync(data.Senha, 10);
+        usuario.Senha = senhaCriptografada;
+    }
+
+    await usuario.save();
+
+    return usuario;
+    
+}
+
+export { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario };
