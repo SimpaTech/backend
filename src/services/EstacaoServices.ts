@@ -57,4 +57,21 @@ async function editarEstacao(ID_Estacao: number, dadosAtualizados: {
     return estacaoExistente;
 }
 
-export { createEstacao, editarEstacao };
+async function removerEstacao(ID_Estacao: number): Promise<{ success: boolean, error?: string }> {
+    const estacaoRepository = SqlDataSource.getRepository(Estacao);
+
+    try {
+        const estacaoExistente = await estacaoRepository.findOne({ where: { ID_Estacao: ID_Estacao } });
+        if (!estacaoExistente) {
+            throw new Error('Estação não encontrada'); 
+        }
+
+        await estacaoRepository.remove(estacaoExistente);
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+export { createEstacao, editarEstacao, removerEstacao };
