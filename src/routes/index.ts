@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { default as UsuarioRoutes } from "./UsuarioRoutes";
-import { default as EstacaoRoutes } from "./estacao";
+import { default as EstacaoRoutes } from "./EstacaoRoutes";
 
 const router = Router();
 
