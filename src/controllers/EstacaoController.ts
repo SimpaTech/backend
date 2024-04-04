@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEstacao, editarEstacao, removerEstacao } from '../services/EstacaoServices';
+import { createEstacao, editarEstacao, listarEstacaoPorID, listarTodasEstacoes, removerEstacao } from '../services/EstacaoServices';
 import { Estacao } from '../entities/Estacao';
 
 class EstacaoController {
@@ -70,5 +70,39 @@ class EstacaoController {
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
+
+    async listarEstacaoPorID(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+
+            if (!id) {
+                res.status(400).json({ error: 'ID da estação não fornecido' });
+                return;
+            }
+
+            const estacao: Estacao | null = await listarEstacaoPorID(parseInt(id));
+
+            if (!estacao) {
+                res.status(404).json({ error: 'Estação não encontrada' });
+                return;
+            }
+
+            res.status(200).json(estacao);
+        } catch (error) {
+            console.error('Erro ao listar estação por ID:', error);
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async listarTodasEstacoes(req: Request, res: Response): Promise<void> {
+        try {
+            const estacoes: Estacao[] = await listarTodasEstacoes();
+            res.status(200).json(estacoes);
+        } catch (error) {
+            console.error('Erro ao listar todas as estações:', error);
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
 }
+
 export default new EstacaoController();

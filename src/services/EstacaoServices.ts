@@ -74,4 +74,14 @@ async function removerEstacao(ID_Estacao: number): Promise<{ success: boolean, e
     }
 }
 
-export { createEstacao, editarEstacao, removerEstacao };
+async function listarEstacaoPorID(ID_Estacao: number): Promise<Estacao | null> {
+    const estacaoRepository = SqlDataSource.getRepository(Estacao);
+    return await estacaoRepository.findOne({ where: { ID_Estacao: ID_Estacao } });
+}
+
+async function listarTodasEstacoes(): Promise<Estacao[]> {
+    const estacaoRepository = SqlDataSource.getRepository(Estacao);
+    return await estacaoRepository.find();
+}
+
+export { createEstacao, editarEstacao, removerEstacao, listarEstacaoPorID, listarTodasEstacoes };
