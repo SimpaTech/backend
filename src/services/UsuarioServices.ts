@@ -58,4 +58,16 @@ async function atualizarUsuario(id, data) {
     
 }
 
-export { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario };
+async function deletarUsuario(id) {
+    const usuarioRepository = SqlDataSource.getRepository(Usuario)
+    const usuario = await usuarioRepository.findOne({ where: { ID_Usuario: id } })
+
+    if (!usuario) {
+        throw new Error("Usuário não encontrado!");
+    }
+
+    const remocaoUsuario = await usuarioRepository.delete(id);
+    return remocaoUsuario;
+}
+
+export { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario };
