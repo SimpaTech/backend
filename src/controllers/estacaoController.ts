@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEstacao } from '../services/estacao';
+import { createEstacao, editarEstacao } from '../services/EstacaoServices';
 import { Estacao } from '../entities/Estacao';
 
 class EstacaoController {
@@ -21,6 +21,31 @@ class EstacaoController {
             res.status(500).json({ message: 'Erro interno do servidor' });
         }
     }
-}
 
+    async editarEstacao(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+            const { Nome, Latitude, Longitude, Data_Instalacao, Tipo_Estacao, Indicativo_Ativa } = req.body;
+
+            if (!id) {
+                res.status(400).json({ message: 'ID da estação não fornecido' });
+                return;
+            }
+
+            const dadosAtualizados = { Nome, Latitude, Longitude, Data_Instalacao, Tipo_Estacao, Indicativo_Ativa };
+
+            const estacaoAtualizada: Estacao | null = await editarEstacao(parseInt(id), dadosAtualizados);
+
+            if (!estacaoAtualizada) {
+                res.status(404).json({ message: 'Estação não encontrada' });
+                return;
+            }
+
+            res.status(200).json(estacaoAtualizada);
+        } catch (error) {
+            console.error('Erro ao editar estação:', error);
+            res.status(500).json({ message: 'Erro interno do servidor' });
+        }
+    }
+}
 export default new EstacaoController();
