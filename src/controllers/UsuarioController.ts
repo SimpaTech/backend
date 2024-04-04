@@ -1,5 +1,5 @@
 import{ Usuario } from "../entities/Usuario";
-import { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario } from '../services/UsuarioServices';
+import { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario } from '../services/UsuarioServices';
 
 class UsuarioController {
 
@@ -87,6 +87,21 @@ class UsuarioController {
             return res.status(200).json({ message: "Usuário atualizado com sucesso!", usuario: usuarioAtualizado });
         } catch(error) {
             return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async removerUsuario(req, res) {
+        try {
+            const id =req.params.id
+
+            const remocaoUsuario = await deletarUsuario(id);
+            return res.status(200).json({ message: "Usuário excluído com sucesso!", usuario: remocaoUsuario});
+        } catch (error) {
+            if (error.message === "Usuário não encontrado!") {
+                return res.status(404).json({ error: error.message });
+            } else {
+                return res.status(500).json({ error: error.message });
+            }
         }
     }
 }

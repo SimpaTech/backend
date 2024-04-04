@@ -8,5 +8,6 @@ routes.get("/", UsuarioController.listarUsuarios)
 routes.get("/buscarUsuario", UsuarioController.buscarUsuario)
 routes.get("/:id", UsuarioController.buscarUsuarioPorId)
 routes.put("/:id", UsuarioController.editarUsuario)
+routes.delete("/:id", UsuarioController.removerUsuario)
 
 export default routes;
