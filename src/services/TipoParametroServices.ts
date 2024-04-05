@@ -13,4 +13,19 @@ async function adicionarTipoParametro(Fator: number, Offset: number, Unidade: st
     return await tipoParametroRepository.save(tipoParametro);
 }
 
-export {adicionarTipoParametro}
+async function listarTodosTipoParametro() {
+    const tipoParametroRepository = SqlDataSource.getRepository(TipoParametro);
+    return await tipoParametroRepository.find();
+}
+
+async function procurarTipoParametroId(id) {
+    const tipoParametroRepository = SqlDataSource.getRepository(TipoParametro);
+    return await tipoParametroRepository.findOne({ where: { ID_Tipo_Parametro: id } })
+}
+
+async function procurarTipoParametro(filtro) {
+    const tipoParametroRepository = SqlDataSource.getRepository(TipoParametro);
+    return await tipoParametroRepository.find({ where: filtro });
+}
+
+export {adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro}
