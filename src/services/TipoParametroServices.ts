@@ -28,4 +28,34 @@ async function procurarTipoParametro(filtro) {
     return await tipoParametroRepository.find({ where: filtro });
 }
 
-export {adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro}
+async function atualizarTipoParametro(id, data) {
+    const tipoParametroRepositoryRepository = SqlDataSource.getRepository(TipoParametro)
+    const tipoparametro = await tipoParametroRepositoryRepository.findOne({ where: { ID_Tipo_Parametro: id } });
+
+    if (!tipoparametro) {
+        throw new Error("Tipo de parâmetro não encontrado!");
+    }
+
+    if (data.Nome_Tipo_Parametro !== undefined && data.Nome_Tipo_Parametro !== "") {
+        tipoparametro.Nome_Tipo_Parametro = data.Nome_Tipo_Parametro;
+    }
+
+    if (data.Offset !== undefined && data.Offset !== "") {
+        tipoparametro.Offset = data.Offset;
+    }
+
+    if (data.Unidade !== undefined && data.Unidade !== "") {
+        tipoparametro.Unidade = data.Unidade;
+    }
+
+    if (data.Fator !== undefined && data.Fator !== "") {
+        tipoparametro.Fator = data.Fator;
+    }
+
+    await tipoparametro.save()
+
+    return tipoparametro
+}
+
+
+export {adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro}

@@ -7,5 +7,6 @@ routes.post("/cadastrarTipoParametro", TipoParametroController.cadastrarTipoPara
 routes.get("/", TipoParametroController.listarTipoParametro);
 routes.get("/buscarTipoParametro/:id", TipoParametroController.buscarTipoParametro);
 routes.get("/filtrarTipoParametro", TipoParametroController.filtrarTipoParametro);
+routes.put("/:id", TipoParametroController.editarTipoParametro);
 
 export default routes;
