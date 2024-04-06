@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { criarTipoAlerta, editarTipoAlerta } from '../services/TipoAlertaServices';
+import { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta } from '../services/TipoAlertaServices';
 import { TipoAlerta } from '../entities/TipoAlerta';
 
 class TipoAlertaController {
@@ -44,6 +44,29 @@ class TipoAlertaController {
         } catch (error) {
             console.error('Erro ao editar tipo de alerta:', error);
             res.status(500).json({ message: 'Erro ao editar tipo de alerta' });
+        }
+    }
+
+    async removerTipoAlerta(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+
+            if (!id) {
+                res.status(400).json({ error: 'ID do tipo de alerta não fornecido' });
+                return;
+            }
+
+            const result = await removerTipoAlerta(parseInt(id));
+
+            if (!result.success) {
+                res.status(404).json({ error: result.error });
+                return;
+            }
+
+            res.status(200).json({ success: "Tipo de alerta removido com sucesso!" });
+        } catch (error) {
+            console.error('Erro ao remover tipo de alerta:', error);
+            res.status(500).json({ error: 'Erro ao remover tipo de alerta' });
         }
     }
 }
