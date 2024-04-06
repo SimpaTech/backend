@@ -58,4 +58,19 @@ async function removerTipoAlerta(ID_Tipo_Alerta: number): Promise<{ success: boo
     }
 }
 
-export { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta };
+async function listarTodosTipoAlerta() {
+    const tipoAlertaRepository = SqlDataSource.getRepository(TipoAlerta);
+    return await tipoAlertaRepository.find();
+}
+
+async function listarTipoAlertaPorId(ID_Tipo_Alerta) {
+    const tipoAlertaRepository = SqlDataSource.getRepository(TipoAlerta);
+    return await tipoAlertaRepository.findOne({ where: { ID_Tipo_Alerta: ID_Tipo_Alerta } })
+}
+
+async function listarTipoAlertaPorCampo(campo) {
+    const tipoAlertaRepository = SqlDataSource.getRepository(TipoAlerta);
+    return await tipoAlertaRepository.find({ where: campo });
+}
+
+export { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta, listarTodosTipoAlerta, listarTipoAlertaPorId, listarTipoAlertaPorCampo };

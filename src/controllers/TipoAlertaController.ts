@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta } from '../services/TipoAlertaServices';
+import { criarTipoAlerta, editarTipoAlerta, listarTipoAlertaPorCampo, listarTipoAlertaPorId, listarTodosTipoAlerta, removerTipoAlerta } from '../services/TipoAlertaServices';
 import { TipoAlerta } from '../entities/TipoAlerta';
 
 class TipoAlertaController {
@@ -67,6 +67,59 @@ class TipoAlertaController {
         } catch (error) {
             console.error('Erro ao remover tipo de alerta:', error);
             res.status(500).json({ error: 'Erro ao remover tipo de alerta' });
+        }
+    }
+
+    async listarTipoAlertaPorID(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+
+            if (!id) {
+                res.status(400).json({ error: 'ID do Tipo Alerta não fornecido' });
+                return;
+            }
+
+            const tipoAlerta: TipoAlerta | null = await listarTipoAlertaPorId(parseInt(id));
+
+            if (!tipoAlerta) {
+                res.status(404).json({ error: 'Tipo Alerta não encontrada' });
+                return;
+            }
+
+            res.status(200).json(tipoAlerta);
+        } catch (error) {
+            console.error('Erro ao listar Tipo Alerta por ID:', error);
+            res.status(500).json({ error: 'Erro ao listar Tipo de Alerta por ID' });
+        }
+    }
+
+    async listarTodosTipoAlerta(req: Request, res: Response): Promise<void> {
+        try {
+            const tipoAlerta: TipoAlerta[] = await listarTodosTipoAlerta();
+            res.status(200).json(tipoAlerta);
+        } catch (error) {
+            console.error('Erro ao listar todas os Tipo Alerta:', error);
+            res.status(500).json({ error: 'Erro ao listar todas os Tipos de alerta' });
+        }
+    }
+
+    async filtrarTipoAlerta(req, res) {
+        try {
+            const campo = req.body;
+    
+            if (Object.keys(campo).length === 0) {
+                return res.status(400).json({ message: "É necessário fornecer pelo menos um parâmetro de filtro." });
+            }
+    
+            const tipoAlerta = await listarTipoAlertaPorCampo(campo);
+    
+            if (tipoAlerta.length === 0) {
+                return res.status(404).json({ message: "Nenhum tipo de alerta encontrado com os filtros fornecidos." });
+            } else {
+                return res.status(200).json(tipoAlerta);
+            }
+        } catch(error) {
+            return res.status(500).json({ error: error.message });
         }
     }
 }
