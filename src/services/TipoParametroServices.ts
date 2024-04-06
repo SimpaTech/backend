@@ -57,5 +57,17 @@ async function atualizarTipoParametro(id, data) {
     return tipoparametro
 }
 
+async function deletarTipoParametro(id) {
+    const tipoParametroRepository = SqlDataSource.getRepository(TipoParametro)
+    const tipoParametro = await tipoParametroRepository.findOne({ where: { ID_Tipo_Parametro: id} })
 
-export {adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro}
+    if (!tipoParametro){
+        throw new Error("Tipo de parâmetro não encontrado!");
+    }
+
+    const removerTipoParametro = await tipoParametroRepository.delete(id)
+    return removerTipoParametro
+}
+
+
+export {adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro, deletarTipoParametro}

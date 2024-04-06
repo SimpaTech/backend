@@ -8,5 +8,6 @@ routes.get("/", TipoParametroController.listarTipoParametro);
 routes.get("/buscarTipoParametro/:id", TipoParametroController.buscarTipoParametro);
 routes.get("/filtrarTipoParametro", TipoParametroController.filtrarTipoParametro);
 routes.put("/:id", TipoParametroController.editarTipoParametro);
+routes.delete("/:id", TipoParametroController.removerTipoParametro);
 
 export default routes;
