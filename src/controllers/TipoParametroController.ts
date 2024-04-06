@@ -1,5 +1,5 @@
 import { TipoParametro } from "../entities/TipoParametro"
-import { adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro } from "../services/TipoParametroServices"
+import { adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro } from "../services/TipoParametroServices"
 
 class TipoParametroController {
 
@@ -70,6 +70,18 @@ class TipoParametroController {
             } else {
                 return res.status(200).json(tipoparametro);
             }
+        } catch(error) {
+            return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async editarTipoParametro(req, res) {
+        try {
+            const id = req.params.id
+            const data = req.body
+
+            const tipoparametroAtualizado = await atualizarTipoParametro(id, data);
+            return res.status(200).json({ message: "Tipo de Parametro atualizado com sucesso!", tipoparametro: tipoparametroAtualizado });
         } catch(error) {
             return res.status(500).json({ error: error.message });
         }
