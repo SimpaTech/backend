@@ -1,5 +1,5 @@
 import { TipoParametro } from "../entities/TipoParametro"
-import { adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro } from "../services/TipoParametroServices"
+import { adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro, deletarTipoParametro } from "../services/TipoParametroServices"
 
 class TipoParametroController {
 
@@ -85,6 +85,22 @@ class TipoParametroController {
         } catch(error) {
             return res.status(500).json({ error: error.message });
         }
+    }
+
+    async removerTipoParametro(req, res) {
+        try {
+            const id =req.params.id
+
+            const remocaoTipoParametro = await deletarTipoParametro(id);
+            return res.status(200).json({ message: "Tipo de Parametro excluído com sucesso!", tipoparametro: remocaoTipoParametro});
+        } catch (error) {
+            if (error.message === "Tipo de Parametro não encontrado!") {
+                return res.status(404).json({ error: error.message });
+            } else {
+                return res.status(500).json({ error: error.message });
+            }
+        }
+
     }
 }
 
