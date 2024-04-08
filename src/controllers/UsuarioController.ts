@@ -30,8 +30,8 @@ class UsuarioController {
             })
 
             if (checarUsuarioExistente) {
-                return res.json({ message: "Já existe um usuário com este CPF"}).status(500);
-            }
+                return res.status(400).json({ error: "Já existe um usuário com este CPF" });
+            }            
 
             const novaUsuario = adicionarUsuario(data.Nome_Usuario, data.CPF_Usuario, data.Role, data.Senha);
             return res.status(200).json({ message: "Cadastrado com sucesso" });
