@@ -1,5 +1,5 @@
 import{ Usuario } from "../entities/Usuario";
-import { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario } from '../services/UsuarioServices';
+import { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario, loginUsuario, obterInformacoesUsuario, logoutUsuario } from '../services/UsuarioServices';
 
 class UsuarioController {
 
@@ -20,10 +20,6 @@ class UsuarioController {
                 return res.json({ message: "Digite uma senha válida..." }).status(500)
             }
 
-            if (!data.Role) {
-                return res.json({ message: "Digite a autorização do usuário..." }).status(500)
-            }
-
             //checar se usuário já existe
             const checarUsuarioExistente = await Usuario.findOne({
                 where: {CPF_Usuario: data.CPF_Usuario}
@@ -33,7 +29,7 @@ class UsuarioController {
                 return res.status(400).json({ error: "Já existe um usuário com este CPF" });
             }            
 
-            const novaUsuario = adicionarUsuario(data.Nome_Usuario, data.CPF_Usuario, data.Role, data.Senha);
+            const novaUsuario = adicionarUsuario(data.Nome_Usuario, data.CPF_Usuario, data.Senha);
             return res.status(200).json({ message: "Cadastrado com sucesso" });
 
         } catch(error) {
@@ -102,6 +98,48 @@ class UsuarioController {
             } else {
                 return res.status(500).json({ error: error.message });
             }
+        }
+    }
+
+    async login(req, res) {
+        try {
+            const data = req.body;
+    
+            const result = await loginUsuario(data);
+            return res.status(result.status).json(result);
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async obterInformacoesUsuarioPeloToken(req, res) {
+        try {
+            const token = req.headers.authorization?.split(' ')[1]; // Obtém o token do cabeçalho de autorização
+    
+            if (!token) {
+                return res.status(401).json({ error: 'Token não fornecido' });
+            }
+    
+            const usuario = await obterInformacoesUsuario(token);
+    
+            if (!usuario) {
+                return res.status(401).json({ error: 'Token inválido ou expirado' });
+            }
+    
+            return res.json(usuario);
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async logout(req, res) {
+        try {
+            const id = req.params.id;
+    
+            const mensagem = await logoutUsuario(parseInt(id));
+            return res.status(200).json({ message: mensagem });
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
         }
     }
 }

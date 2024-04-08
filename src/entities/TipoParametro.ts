@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity } from "typeorm";
 import { Parametro } from "./Parametro";
 
 @Entity()
-export class TipoParametro {
+export class TipoParametro extends BaseEntity {
     @PrimaryGeneratedColumn()
     ID_Tipo_Parametro: number;
 
