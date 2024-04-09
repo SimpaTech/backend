@@ -168,7 +168,7 @@ async function obterInformacoesUsuario(token) {
             throw new Error('Token inválido: ID do usuário não encontrado');
         }
 
-        console.log(decoded)
+        // console.log(decoded)
 
         if (!usuario) {
             throw new Error('Usuário não encontrado no banco de dados');
@@ -184,4 +184,27 @@ async function obterInformacoesUsuario(token) {
     }
 }
 
-export { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario, loginUsuario, obterInformacoesUsuario, logoutUsuario };
+async function cadastrarUsuarioPadrao() {
+    const usuarioRepository = SqlDataSource.getRepository(Usuario)
+
+    // Verifica se já existe algum usuário cadastrado
+    const usuarios = await usuarioRepository.find();
+    const Senha = "123"
+    const senhaCriptografada = bcrypt.hashSync(Senha, 10);
+    
+    // Se não existir nenhum usuário cadastrado, cadastra o usuário padrão
+    if (usuarios.length === 0) {
+        const novoUsuario = usuarioRepository.create({
+            Nome_Usuario: "Usuario Padrão",
+            CPF_Usuario: "11111111111",
+            Role: "1",
+            Senha: senhaCriptografada,
+            Token: null 
+        });
+        await usuarioRepository.save(novoUsuario);
+        console.log("Usuário padrão cadastrado com sucesso.");
+    } else {
+        console.log("Já existe um usuário cadastrado. Nenhum usuário padrão será cadastrado.");
+    }
+}
+export { adicionarUsuario, listarTodosUsuarios, procurarUsuario, procurarUsuarioPorId, atualizarUsuario, deletarUsuario, loginUsuario, obterInformacoesUsuario, logoutUsuario, cadastrarUsuarioPadrao };

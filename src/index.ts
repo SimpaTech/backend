@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import SqlDataSource from './data-source';
 import router from './routes';
+import { cadastrarUsuarioPadrao } from './services/UsuarioServices';
 
 const app = express();
 const port = 4000;
@@ -21,6 +22,7 @@ SqlDataSource.initialize()
     .then(() => {
         app.listen(port, () => {
             console.log(`Servidor está rodando em http://localhost:${port}`);
+            cadastrarUsuarioPadrao();
         });
     })
     .catch((e) => {
