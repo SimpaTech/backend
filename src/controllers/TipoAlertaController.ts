@@ -5,14 +5,14 @@ import { TipoAlerta } from '../entities/TipoAlerta';
 class TipoAlertaController {
     async criarTipoAlerta(req: Request, res: Response): Promise<void> {
         try {
-            const { Nome_Tipo_Alerta, Valor, Operador_Condicional, ID_Parametro } = req.body;
+            const { Nome_Tipo_Alerta, Valor, Operador_Condicional } = req.body;
 
-            if (!Nome_Tipo_Alerta || !Valor || !Operador_Condicional || !ID_Parametro) {
+            if (!Nome_Tipo_Alerta || !Valor || !Operador_Condicional) {
                 res.status(400).json({ message: 'Todos os campos são obrigatórios' });
                 return;
             }
 
-            const novoTipoAlerta: TipoAlerta = await criarTipoAlerta(Nome_Tipo_Alerta, Valor, Operador_Condicional, ID_Parametro);
+            const novoTipoAlerta: TipoAlerta = await criarTipoAlerta(Nome_Tipo_Alerta, Valor, Operador_Condicional);
 
             res.status(201).json(novoTipoAlerta);
         } catch (error) {

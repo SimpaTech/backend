@@ -1,7 +1,6 @@
-// src/entities/Ocorrencias.ts
 import { Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { Medida } from "./Medida";
-import { TipoAlerta } from "./TipoAlerta";
+import { Parametro_Alerta } from "./ParametroAlerta";
 
 @Entity()
 export class Ocorrencias {
@@ -11,6 +10,6 @@ export class Ocorrencias {
     @ManyToOne(() => Medida)
     medida: Medida;
 
-    @ManyToOne(() => TipoAlerta)
-    tipoAlerta: TipoAlerta;
+    @ManyToOne(() => Parametro_Alerta)
+    parametro_alerta: Parametro_Alerta;
 }
