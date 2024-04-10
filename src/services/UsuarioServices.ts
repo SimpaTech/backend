@@ -49,6 +49,10 @@ async function atualizarUsuario(id, data) {
         usuario.Nome_Usuario = data.Nome_Usuario;
     }
 
+    if (data.CPF_Usuario !== undefined) {
+        usuario.CPF_Usuario = data.CPF_Usuario;
+    }
+
     if (data.Role !== undefined) {
         usuario.Role = data.Role;
     }
