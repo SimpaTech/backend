@@ -8,6 +8,7 @@ async function criarTipoAlerta(nome: string, valor: number, operadorCondicional:
     novoTipoAlerta.Nome_Tipo_Alerta = nome;
     novoTipoAlerta.Valor = valor;
     novoTipoAlerta.Operador_Condicional = operadorCondicional;
+    novoTipoAlerta.Indicativo_Ativa = true;
 
     return await tipoAlertaRepository.save(novoTipoAlerta);
 }
@@ -90,4 +91,14 @@ async function alternarStatusTipoAlerta(ID_Tipo_Alerta: number): Promise<{ succe
     }
 }
 
-export { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta, listarTodosTipoAlerta, listarTipoAlertaPorId, listarTipoAlertaPorCampo, alternarStatusTipoAlerta };
+async function listarTodosTiposAlertaAtivos(): Promise<TipoAlerta[] | null> {
+    const tipoAlertaRepository = SqlDataSource.getRepository(TipoAlerta);
+    try {
+        const tipoAlertaAtivas = await tipoAlertaRepository.find({ where: { Indicativo_Ativa: true } });
+        return tipoAlertaAtivas;
+    } catch (error) {
+        return null;
+    }
+}
+
+export { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta, listarTodosTipoAlerta, listarTipoAlertaPorId, listarTipoAlertaPorCampo, alternarStatusTipoAlerta, listarTodosTiposAlertaAtivos };

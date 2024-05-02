@@ -13,7 +13,7 @@ async function createEstacao(Nome: string, Latitude: number, Longitude: number, 
     estacao.Longitude = Longitude;
     estacao.Data_Instalacao = Data_Instalacao;
     estacao.Tipo_Estacao = Tipo_Estacao;
-    estacao.Indicativo_Ativa = Indicativo_Ativa;
+    estacao.Indicativo_Ativa = true;
 
     return await estacaoRepository.save(estacao);
 }
@@ -105,6 +105,16 @@ async function listarTodasEstacoes(): Promise<Estacao[]> {
     return await estacaoRepository.find();
 }
 
+async function listarTodasEstacoesAtivas(): Promise<Estacao[] | null> {
+    const estacaoRepository = SqlDataSource.getRepository(Estacao);
+    try {
+        const estacoesAtivas = await estacaoRepository.find({ where: { Indicativo_Ativa: true } });
+        return estacoesAtivas;
+    } catch (error) {
+        return null;
+    }
+}
+
 async function alternarStatusEstacao(ID_Estacao: number): Promise<{ success: boolean, error?: string }> {
     const estacaoRepository = SqlDataSource.getRepository(Estacao);
 
@@ -124,4 +134,4 @@ async function alternarStatusEstacao(ID_Estacao: number): Promise<{ success: boo
     }
 }
 
-export { createEstacao, editarEstacao, removerEstacao, listarEstacaoPorID, listarTodasEstacoes, alternarStatusEstacao };
+export { createEstacao, editarEstacao, removerEstacao, listarEstacaoPorID, listarTodasEstacoes, alternarStatusEstacao, listarTodasEstacoesAtivas };

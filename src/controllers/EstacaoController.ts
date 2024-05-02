@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEstacao, editarEstacao, listarEstacaoPorID, listarTodasEstacoes, removerEstacao, alternarStatusEstacao } from '../services/EstacaoServices';
+import { createEstacao, editarEstacao, listarEstacaoPorID, listarTodasEstacoes, removerEstacao, alternarStatusEstacao, listarTodasEstacoesAtivas } from '../services/EstacaoServices';
 import { Estacao } from '../entities/Estacao';
 
 class EstacaoController {
@@ -8,7 +8,7 @@ class EstacaoController {
             const { Nome, Latitude, Longitude, Data_Instalacao, Tipo_Estacao, Indicativo_Ativa } = req.body;
 
             // Validar os campos
-            if (!Nome || !Latitude || !Longitude || !Data_Instalacao || !Tipo_Estacao || Indicativo_Ativa === undefined) {
+            if (!Nome || !Latitude || !Longitude || !Data_Instalacao || !Tipo_Estacao) {
                 res.status(400).json({ message: 'Todos os campos são obrigatórios' });
                 return;
             }
@@ -122,6 +122,19 @@ class EstacaoController {
         } catch (error) {
             console.error('Erro ao listar todas as estações:', error);
             res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async listarEstacoesAtivas(req: Request, res: Response): Promise<void> {
+        try {
+            const estacoesAtivas = await listarTodasEstacoesAtivas();
+            if (estacoesAtivas !== null) {
+                res.status(200).json(estacoesAtivas);
+            } else {
+                res.status(500).json({ message: 'Erro ao buscar as estações ativas.' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Erro interno do servidor.' });
         }
     }
 }

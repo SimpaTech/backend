@@ -9,6 +9,7 @@ async function adicionarTipoParametro(Fator: number, Offset: number, Unidade: st
     tipoParametro.Offset = Offset;
     tipoParametro.Unidade = Unidade;
     tipoParametro.Nome_Tipo_Parametro = Nome_Tipo_Parametro;
+    tipoParametro.Indicativo_Ativa = true;
 
     return await tipoParametroRepository.save(tipoParametro);
 }
@@ -88,4 +89,14 @@ async function alternarStatusTipoAlerta(ID_Tipo_Parametro: number): Promise<{ su
     }
 }
 
-export {adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro, deletarTipoParametro, alternarStatusTipoAlerta}
+async function listarTodosTiposParametroAtivos(): Promise<TipoParametro[] | null> {
+    const tipoParametroRepository = SqlDataSource.getRepository(TipoParametro);
+    try {
+        const tipoParametroAtivas = await tipoParametroRepository.find({ where: { Indicativo_Ativa: true } });
+        return tipoParametroAtivas;
+    } catch (error) {
+        return null;
+    }
+}
+
+export {adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro, deletarTipoParametro, alternarStatusTipoAlerta, listarTodosTiposParametroAtivos }
