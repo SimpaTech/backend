@@ -13,4 +13,7 @@ export class TipoAlerta {
 
     @Column()
     Operador_Condicional: string;
+
+    @Column()
+    Indicativo_Ativa: boolean;
 }

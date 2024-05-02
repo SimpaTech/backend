@@ -18,6 +18,9 @@ export class TipoParametro extends BaseEntity {
     @Column()
     Nome_Tipo_Parametro: string;
 
+    @Column()
+    Indicativo_Ativa: boolean;
+
     @OneToMany(() => Parametro, parametro => parametro.tipoParametro)
     parametros: Parametro[];
 }
