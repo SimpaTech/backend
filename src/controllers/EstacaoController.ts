@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEstacao, editarEstacao, listarEstacaoPorID, listarTodasEstacoes, removerEstacao } from '../services/EstacaoServices';
+import { createEstacao, editarEstacao, listarEstacaoPorID, listarTodasEstacoes, removerEstacao, alternarStatusEstacao } from '../services/EstacaoServices';
 import { Estacao } from '../entities/Estacao';
 
 class EstacaoController {
@@ -68,6 +68,27 @@ class EstacaoController {
         } catch (error) {
             console.error('Erro ao remover estação:', error);
             res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async alterarIndicativo(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+    
+            if (!id) {
+                res.status(400).json({ success: false, error: 'ID_Estacao não fornecido' });
+                return;
+            }
+    
+            const result = await alternarStatusEstacao(Number(id));
+    
+            if (result.success) {
+                res.json({ success: true });
+            } else {
+                res.status(500).json({ success: false, error: result.error });
+            }
+        } catch (error) {
+            res.status(500).json({ success: false, error: error.message });
         }
     }
 

@@ -71,4 +71,23 @@ async function listarTipoAlertaPorCampo(campo) {
     return await tipoAlertaRepository.find({ where: campo });
 }
 
-export { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta, listarTodosTipoAlerta, listarTipoAlertaPorId, listarTipoAlertaPorCampo };
+async function alternarStatusTipoAlerta(ID_Tipo_Alerta: number): Promise<{ success: boolean, error?: string }> {
+    const tipoAlertaRepository = SqlDataSource.getRepository(TipoAlerta);
+
+    try {
+        const tipoAlertaExistente = await tipoAlertaRepository.findOne({ where: { ID_Tipo_Alerta: ID_Tipo_Alerta } });
+        if (!tipoAlertaExistente) {
+            throw new Error('Tipo de alerta não encontrado'); 
+        }
+
+        tipoAlertaExistente.Indicativo_Ativa = !tipoAlertaExistente.Indicativo_Ativa;
+
+        await tipoAlertaRepository.save(tipoAlertaExistente);
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+export { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta, listarTodosTipoAlerta, listarTipoAlertaPorId, listarTipoAlertaPorCampo, alternarStatusTipoAlerta };

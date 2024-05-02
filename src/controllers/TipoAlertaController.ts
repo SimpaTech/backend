@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { criarTipoAlerta, editarTipoAlerta, listarTipoAlertaPorCampo, listarTipoAlertaPorId, listarTodosTipoAlerta, removerTipoAlerta } from '../services/TipoAlertaServices';
+import { criarTipoAlerta, editarTipoAlerta, listarTipoAlertaPorCampo, listarTipoAlertaPorId, listarTodosTipoAlerta, removerTipoAlerta, alternarStatusTipoAlerta } from '../services/TipoAlertaServices';
 import { TipoAlerta } from '../entities/TipoAlerta';
 
 class TipoAlertaController {
@@ -120,6 +120,27 @@ class TipoAlertaController {
             }
         } catch(error) {
             return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async alterarIndicativo(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+    
+            if (!id) {
+                res.status(400).json({ success: false, error: 'ID não fornecido' });
+                return;
+            }
+    
+            const result = await alternarStatusTipoAlerta(Number(id));
+    
+            if (result.success) {
+                res.json({ success: true });
+            } else {
+                res.status(500).json({ success: false, error: result.error });
+            }
+        } catch (error) {
+            res.status(500).json({ success: false, error: error.message });
         }
     }
 }
