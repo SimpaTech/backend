@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Estacao } from "../entities/Estacao";
 import SqlDataSource from "../data-source";
+import { Parametro_Alerta } from '../entities/ParametroAlerta';
 
 async function createEstacao(Nome: string, Latitude: number, Longitude: number, Data_Instalacao: Date, Tipo_Estacao: string, Indicativo_Ativa: boolean): Promise<Estacao> {
     const estacaoRepository = SqlDataSource.getRepository(Estacao)
@@ -76,7 +77,27 @@ async function removerEstacao(ID_Estacao: number): Promise<{ success: boolean, e
 
 async function listarEstacaoPorID(ID_Estacao: number): Promise<Estacao | null> {
     const estacaoRepository = SqlDataSource.getRepository(Estacao);
-    return await estacaoRepository.findOne({ where: { ID_Estacao: ID_Estacao } });
+    
+    const estacao = await estacaoRepository.createQueryBuilder("estacao")
+        .leftJoinAndSelect("estacao.parametros", "parametro")
+        .leftJoinAndSelect("parametro.tipoParametro", "tipoParametro")
+        .where("estacao.ID_Estacao = :id", { id: ID_Estacao })
+        .getOne();
+
+    if (!estacao) return null;
+
+
+    for (const parametro of estacao.parametros) {
+        const parametroAlertaRepository = SqlDataSource.getRepository(Parametro_Alerta);
+        const parametroAlertas =  await parametroAlertaRepository.createQueryBuilder("parametroAlerta")
+            .leftJoinAndSelect("parametroAlerta.tipoAlerta", "tipoAlerta")
+            .where("parametroAlerta.parametro = :parametroId", { parametroId: parametro.ID_Parametro })
+            .getMany();
+
+        parametro.parametroAlertas = parametroAlertas;
+    }
+
+    return estacao;
 }
 
 async function listarTodasEstacoes(): Promise<Estacao[]> {
