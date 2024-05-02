@@ -13,7 +13,7 @@ async function createEstacao(Nome: string, Latitude: number, Longitude: number, 
     estacao.Longitude = Longitude;
     estacao.Data_Instalacao = Data_Instalacao;
     estacao.Tipo_Estacao = Tipo_Estacao;
-    estacao.Indicativo_Ativa = Indicativo_Ativa;
+    estacao.Indicativo_Ativa = true;
 
     return await estacaoRepository.save(estacao);
 }
@@ -105,4 +105,33 @@ async function listarTodasEstacoes(): Promise<Estacao[]> {
     return await estacaoRepository.find();
 }
 
-export { createEstacao, editarEstacao, removerEstacao, listarEstacaoPorID, listarTodasEstacoes };
+async function listarTodasEstacoesAtivas(): Promise<Estacao[] | null> {
+    const estacaoRepository = SqlDataSource.getRepository(Estacao);
+    try {
+        const estacoesAtivas = await estacaoRepository.find({ where: { Indicativo_Ativa: true } });
+        return estacoesAtivas;
+    } catch (error) {
+        return null;
+    }
+}
+
+async function alternarStatusEstacao(ID_Estacao: number): Promise<{ success: boolean, error?: string }> {
+    const estacaoRepository = SqlDataSource.getRepository(Estacao);
+
+    try {
+        const estacaoExistente = await estacaoRepository.findOne({ where: { ID_Estacao: ID_Estacao } });
+        if (!estacaoExistente) {
+            throw new Error('Estação não encontrada'); 
+        }
+
+        estacaoExistente.Indicativo_Ativa = !estacaoExistente.Indicativo_Ativa;
+
+        await estacaoRepository.save(estacaoExistente);
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+export { createEstacao, editarEstacao, removerEstacao, listarEstacaoPorID, listarTodasEstacoes, alternarStatusEstacao, listarTodasEstacoesAtivas };

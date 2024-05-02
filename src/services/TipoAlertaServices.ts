@@ -8,6 +8,7 @@ async function criarTipoAlerta(nome: string, valor: number, operadorCondicional:
     novoTipoAlerta.Nome_Tipo_Alerta = nome;
     novoTipoAlerta.Valor = valor;
     novoTipoAlerta.Operador_Condicional = operadorCondicional;
+    novoTipoAlerta.Indicativo_Ativa = true;
 
     return await tipoAlertaRepository.save(novoTipoAlerta);
 }
@@ -71,4 +72,33 @@ async function listarTipoAlertaPorCampo(campo) {
     return await tipoAlertaRepository.find({ where: campo });
 }
 
-export { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta, listarTodosTipoAlerta, listarTipoAlertaPorId, listarTipoAlertaPorCampo };
+async function alternarStatusTipoAlerta(ID_Tipo_Alerta: number): Promise<{ success: boolean, error?: string }> {
+    const tipoAlertaRepository = SqlDataSource.getRepository(TipoAlerta);
+
+    try {
+        const tipoAlertaExistente = await tipoAlertaRepository.findOne({ where: { ID_Tipo_Alerta: ID_Tipo_Alerta } });
+        if (!tipoAlertaExistente) {
+            throw new Error('Tipo de alerta não encontrado'); 
+        }
+
+        tipoAlertaExistente.Indicativo_Ativa = !tipoAlertaExistente.Indicativo_Ativa;
+
+        await tipoAlertaRepository.save(tipoAlertaExistente);
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+async function listarTodosTiposAlertaAtivos(): Promise<TipoAlerta[] | null> {
+    const tipoAlertaRepository = SqlDataSource.getRepository(TipoAlerta);
+    try {
+        const tipoAlertaAtivas = await tipoAlertaRepository.find({ where: { Indicativo_Ativa: true } });
+        return tipoAlertaAtivas;
+    } catch (error) {
+        return null;
+    }
+}
+
+export { criarTipoAlerta, editarTipoAlerta, removerTipoAlerta, listarTodosTipoAlerta, listarTipoAlertaPorId, listarTipoAlertaPorCampo, alternarStatusTipoAlerta, listarTodosTiposAlertaAtivos };

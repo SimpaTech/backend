@@ -1,5 +1,5 @@
 import { TipoParametro } from "../entities/TipoParametro"
-import { adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro, deletarTipoParametro } from "../services/TipoParametroServices"
+import { adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro, deletarTipoParametro, alternarStatusTipoAlerta, listarTodosTiposParametroAtivos } from "../services/TipoParametroServices"
 
 class TipoParametroController {
 
@@ -101,6 +101,40 @@ class TipoParametroController {
             }
         }
 
+    }
+
+    async alterarIndicativo(req, res) {
+        try {
+            const { id } = req.params;
+    
+            if (!id) {
+                res.status(400).json({ success: false, error: 'ID não fornecido' });
+                return;
+            }
+    
+            const result = await alternarStatusTipoAlerta(Number(id));
+    
+            if (result.success) {
+                res.json({ success: true });
+            } else {
+                res.status(500).json({ success: false, error: result.error });
+            }
+        } catch (error) {
+            res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    async listarTiposParametroAtivos(req, res){
+        try {
+            const tipoParametroAtivos = await listarTodosTiposParametroAtivos();
+            if (tipoParametroAtivos !== null) {
+                res.status(200).json(tipoParametroAtivos);
+            } else {
+                res.status(500).json({ message: 'Erro ao buscar as estações ativas.' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Erro interno do servidor.' });
+        }
     }
 }
 

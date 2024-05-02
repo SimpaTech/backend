@@ -9,6 +9,7 @@ async function adicionarTipoParametro(Fator: number, Offset: number, Unidade: st
     tipoParametro.Offset = Offset;
     tipoParametro.Unidade = Unidade;
     tipoParametro.Nome_Tipo_Parametro = Nome_Tipo_Parametro;
+    tipoParametro.Indicativo_Ativa = true;
 
     return await tipoParametroRepository.save(tipoParametro);
 }
@@ -69,5 +70,33 @@ async function deletarTipoParametro(id) {
     return removerTipoParametro
 }
 
+async function alternarStatusTipoAlerta(ID_Tipo_Parametro: number): Promise<{ success: boolean, error?: string }> {
+    const tipoParametroRepository = SqlDataSource.getRepository(TipoParametro);
 
-export {adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro, deletarTipoParametro}
+    try {
+        const tipoParametroExistente = await tipoParametroRepository.findOne({ where: { ID_Tipo_Parametro: ID_Tipo_Parametro } });
+        if (!tipoParametroExistente) {
+            throw new Error('Tipo de alerta não encontrado'); 
+        }
+
+        tipoParametroExistente.Indicativo_Ativa = !tipoParametroExistente.Indicativo_Ativa;
+
+        await tipoParametroRepository.save(tipoParametroExistente);
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+async function listarTodosTiposParametroAtivos(): Promise<TipoParametro[] | null> {
+    const tipoParametroRepository = SqlDataSource.getRepository(TipoParametro);
+    try {
+        const tipoParametroAtivas = await tipoParametroRepository.find({ where: { Indicativo_Ativa: true } });
+        return tipoParametroAtivas;
+    } catch (error) {
+        return null;
+    }
+}
+
+export {adicionarTipoParametro, listarTodosTipoParametro, procurarTipoParametroId, procurarTipoParametro, atualizarTipoParametro, deletarTipoParametro, alternarStatusTipoAlerta, listarTodosTiposParametroAtivos }
