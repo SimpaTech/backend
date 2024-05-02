@@ -3,6 +3,7 @@ import cors from 'cors';
 import SqlDataSource from './data-source';
 import router from './routes';
 import { cadastrarUsuarioPadrao } from './services/UsuarioServices';
+import { connectMongo } from './mongoDB';
 
 const app = express();
 const port = 4000;
@@ -20,10 +21,21 @@ app.get('/', (req, res) => {
 
 SqlDataSource.initialize()
     .then(() => {
-        app.listen(port, () => {
-            console.log(`Servidor está rodando em http://localhost:${port}`);
-            cadastrarUsuarioPadrao();
-        });
+        cadastrarUsuarioPadrao()
+            .then(() => {
+                connectMongo()
+                    .then(() => {
+                        app.listen(port, () => {
+                            console.log(`Servidor está rodando em http://localhost:${port}`);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao conectar ao MongoDB Atlas:", error);
+                    });
+            })
+            .catch((error) => {
+                console.error("Erro ao cadastrar o usuário padrão:", error);
+            });
     })
     .catch((e) => {
         console.error("Erro na inicialização do Data Source:", e);
