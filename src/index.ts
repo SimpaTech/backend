@@ -4,6 +4,8 @@ import SqlDataSource from './data-source';
 import router from './routes';
 import { cadastrarUsuarioPadrao } from './services/UsuarioServices';
 import { connectMongo } from './mongoDB';
+import TratamentoServices from './services/TratamentoServices';
+import cron from 'node-cron';
 
 const app = express();
 const port = 4000;
@@ -15,9 +17,18 @@ app.use(cors());
 app.use(router);
 
 app.get('/', (req, res) => {
-  res.send('Backend API está sendo executado!');
+    res.send('Backend API está sendo executado!');
 });
 
+async function iniciarTratamentoMedidas() {
+    await TratamentoServices.processarMedidas();
+}
+
+// Agenda a execução do tratamento das medidas a cada 15 minutos
+cron.schedule('*/15 * * * *', async () => {
+    console.log('Executando o tratamento das medidas...');
+    await iniciarTratamentoMedidas();
+});
 
 SqlDataSource.initialize()
     .then(() => {
@@ -27,6 +38,7 @@ SqlDataSource.initialize()
                     .then(() => {
                         app.listen(port, () => {
                             console.log(`Servidor está rodando em http://localhost:${port}`);
+                            iniciarTratamentoMedidas();
                         });
                     })
                     .catch((error) => {

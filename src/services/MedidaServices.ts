@@ -2,7 +2,7 @@ import { Medida } from "../entities/Medida";
 import SqlDataSource from "../data-source";
 import { Parametro } from "../entities/Parametro";
 
-async function adicionarMedida(parametro: Parametro, UnixTime: number, Valor: number): Promise<Medida> {
+async function adicionarMedida(parametro: Parametro, UnixTime: number, Valor: number): Promise<Medida | null> {
     const medidaRepository = SqlDataSource.getRepository(Medida);
 
     const medida = new Medida();
@@ -10,7 +10,12 @@ async function adicionarMedida(parametro: Parametro, UnixTime: number, Valor: nu
     medida.UnixTime = UnixTime;
     medida.Valor = Valor;
 
-    return await medidaRepository.save(medida);
+    try {
+        return await medidaRepository.save(medida);
+    } catch (error) {
+        console.error('Erro ao adicionar medida:', error);
+        return null;
+    }
 }
 
 async function listarTodasMedidas(): Promise<Medida[]> {
