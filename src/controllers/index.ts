@@ -6,3 +6,4 @@ export { default as ParametroAlertaController } from "./ParametroAlertaControlle
 export { default as OcorenciasController } from "./OcorrenciasController"
 export { default as ParametroController } from "./ParametroController"
 export { default as MongoController } from "./MongoController"
+export { default as MedidaController } from "./MedidaController"

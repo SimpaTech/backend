@@ -8,6 +8,7 @@ import { default as ParametroAlertaRoutes } from "./ParametroAlertaRoutes";
 import { default as OcorrenciasRoutes } from "./OcorrenciasRoutes";
 import { default as ParametroRoutes } from "./ParametroRoutes";
 import { default as MongoRoutes } from "./MongoRoutes"
+import { default as MedidaRoutes } from "./MedidaRoutes"
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use("/parametroAlerta", ParametroAlertaRoutes);
 router.use("/ocorrencias", OcorrenciasRoutes);
 router.use("/parametro", ParametroRoutes);
 router.use("/mongodb", MongoRoutes);
+router.use("/medida", MedidaRoutes);
 
 export default router;
