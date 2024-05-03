@@ -25,6 +25,7 @@ async function listarTodasMedidas(): Promise<Medida[]> {
     const medidas = await medidaRepository.createQueryBuilder("medida")
         .leftJoinAndSelect("medida.parametro", "parametro")
         .leftJoinAndSelect("parametro.estacao", "estacao")
+        .leftJoinAndSelect("parametro.tipoParametro", "tipoParametro")
         .getMany();
 
     return medidas;
