@@ -1,6 +1,7 @@
 import { Medida } from "../entities/Medida";
 import SqlDataSource from "../data-source";
 import { Parametro } from "../entities/Parametro";
+import { getRepository } from "typeorm";
 
 async function adicionarMedida(parametro: Parametro, UnixTime: number, Valor: number): Promise<Medida | null> {
     const medidaRepository = SqlDataSource.getRepository(Medida);
@@ -20,7 +21,14 @@ async function adicionarMedida(parametro: Parametro, UnixTime: number, Valor: nu
 
 async function listarTodasMedidas(): Promise<Medida[]> {
     const medidaRepository = SqlDataSource.getRepository(Medida);
-    return await medidaRepository.find();
+
+    const medidas = await medidaRepository.createQueryBuilder("medida")
+        .leftJoinAndSelect("medida.parametro", "parametro")
+        .leftJoinAndSelect("parametro.estacao", "estacao")
+        .leftJoinAndSelect("parametro.tipoParametro", "tipoParametro")
+        .getMany();
+
+    return medidas;
 }
 
 async function procurarMedidaPorId(id: number): Promise<Medida | undefined> {
