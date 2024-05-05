@@ -85,4 +85,34 @@ async function editarParametro(ID_Parametro: number, dadosAtualizados: {
     return parametroExistente;
 }
 
-export { criarParametro, removerParametro, listarTodosParametros, editarParametro };
+async function removerParametroPorIdEstacao(ID_Estacao: number): Promise<{ success: boolean, error?: string }> {
+    const parametroRepository = SqlDataSource.getRepository(Parametro);
+
+    try {
+        // Encontra e remove todos os parâmetros associados ao ID da estação
+        await parametroRepository.delete({ estacao: { ID_Estacao } });
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+async function listarTodosParametrosPorEstacao(estacaoIDEstacao: number): Promise<Parametro[]> {
+    const parametroRepository = SqlDataSource.getRepository(Parametro);
+
+    try {
+        const parametros = await parametroRepository.createQueryBuilder("parametro")
+            .leftJoinAndSelect("parametro.tipoParametro", "tipoParametro")
+            .where("parametro.estacaoIDEstacao = :estacaoIDEstacao", { estacaoIDEstacao })
+            .getMany();
+
+        return parametros;
+    } catch (error) {
+        console.error('Erro ao listar todos os parâmetros por ID de estação:', error);
+        throw error;
+    }
+}
+
+
+export { criarParametro, removerParametro, listarTodosParametros, editarParametro, removerParametroPorIdEstacao, listarTodosParametrosPorEstacao };
