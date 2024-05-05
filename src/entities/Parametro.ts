@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "ty
 import { Estacao } from "./Estacao";
 import { TipoParametro } from "./TipoParametro";
 import { Medida } from "./Medida";
+import { Parametro_Alerta } from "./ParametroAlerta";
 
 @Entity()
 export class Parametro {
@@ -16,4 +17,7 @@ export class Parametro {
 
     @OneToMany(() => Medida, medida => medida.parametro)
     medidas: Medida[];
+
+    @OneToMany(() => Parametro_Alerta, parametroAlerta => parametroAlerta.parametro)
+    parametroAlertas: Parametro_Alerta[];
 }
