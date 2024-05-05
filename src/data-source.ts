@@ -4,7 +4,7 @@ const SqlDataSource = new DataSource({
     host: "localhost",
     port: 3306,
     username: "root",
-    password: "123456",
+    password: "fatec",
     database: "simpatech",
     type: "mysql",
     synchronize: false,
