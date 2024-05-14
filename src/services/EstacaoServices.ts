@@ -3,11 +3,11 @@ import { Estacao } from "../entities/Estacao";
 import SqlDataSource from "../data-source";
 import { Parametro_Alerta } from '../entities/ParametroAlerta';
 
-async function createEstacao(Nome: string, Latitude: number, Longitude: number, Data_Instalacao: Date, Tipo_Estacao: string, Indicativo_Ativa: boolean): Promise<Estacao> {
+async function createEstacao(Nome: string, Latitude: number, Longitude: number, Data_Instalacao: Date, Tipo_Estacao: string, Indicativo_Ativa: boolean, UID:string): Promise<Estacao> {
     const estacaoRepository = SqlDataSource.getRepository(Estacao)
 
     const estacao = new Estacao();
-    estacao.UID = uuidv4(); 
+    estacao.UID = UID; 
     estacao.Nome = Nome;
     estacao.Latitude = Latitude;
     estacao.Longitude = Longitude;

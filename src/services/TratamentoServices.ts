@@ -19,7 +19,7 @@ class TratamentoServices {
 
             // Processa cada medida
             for (const medida of medidas) {
-                const { uid, medidas: medidasArray } = medida;
+                const { uid, unixtime, ...medidaData } = medida;
 
                 const estacaoRepository = SqlDataSource.getRepository(Estacao);
                 const estacao = await estacaoRepository.findOne({ where: { UID: uid } });
@@ -33,38 +33,40 @@ class TratamentoServices {
 
                 console.log(`ID_Estação = ${ID_Estacao}`);
 
-                for (const medidaItem of medidasArray) {
+                for (const [nomeCampo, valor] of Object.entries(medidaData)) {
                     const tipoParametroRepository = SqlDataSource.getRepository(TipoParametro);
-                    const tipoParametro = await tipoParametroRepository.findOne({ where: { ID_Tipo_Parametro: medidaItem.IdTipoParametro } });
+                    const tipoParametro = await tipoParametroRepository.findOne({ where: { Json: nomeCampo } });
 
                     if (!tipoParametro) {
-                        console.log(`Tipo de parâmetro com ID ${medidaItem.IdTipoParametro} não encontrado.`);
+                        console.log(`Tipo de parâmetro com nome ${nomeCampo} não encontrado.`);
                         continue;
                     }
 
                     const { Fator, Offset } = tipoParametro;
 
-                    let valorFinal = medidaItem.valor;
+                    let valorFinal = valor;
 
-                    if (Fator > 0) {
+                    if (Fator !== 0) {
                         valorFinal *= Fator;
-                    } else if (Fator < 0) {
-                        valorFinal /= Math.abs(Fator);
                     }
 
-                    if (Offset > 0) {
+                    if (Offset !== 0) {
                         valorFinal += Offset;
-                    } else if (Offset < 0) {
-                        valorFinal -= Math.abs(Offset);
                     }
 
                     const parametroRepository = SqlDataSource.getRepository(Parametro);
                     const parametro = await parametroRepository.findOne({ where: { tipoParametro: tipoParametro } });
 
                     const ID_Parametro = parametro.ID_Parametro;
-                    console.log(`IDTipoParametro = ${medidaItem.IdTipoParametro}, Fator = ${Fator}, Offset = ${Offset}, Valor final = ${valorFinal}, ID_Parametro = ${ID_Parametro}`);
+                    console.log(`Nome do parâmetro = ${nomeCampo}, Fator = ${Fator}, Offset = ${Offset}, Valor final = ${valorFinal}, ID_Parametro = ${ID_Parametro}`);
 
-                    await adicionarMedida(parametro, medidaItem.unixtime, valorFinal);
+                    try {
+                        await adicionarMedida(parametro, unixtime, valorFinal);
+                    } catch (error) {
+                        // Se ocorrer um erro,  exibe a mensagem e continua para a próxima medida
+                        console.error(`Erro ao adicionar medida para UID ${uid}:`, error);
+                        continue;
+                    }
                 }
 
                 // Deleta o documento após processar todas as medidas
@@ -77,7 +79,7 @@ class TratamentoServices {
             console.error('Erro ao processar medidas:', error);
         } finally {
             await client.close();
-            console.log('Conexão com o MongoDB fechada.');
+            console.log('Conexão com o MongoDB para o tratamento finalizada.');
         }
     }
 }

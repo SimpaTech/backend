@@ -1,10 +1,13 @@
 import { DataSource } from "typeorm";
+import { config } from 'dotenv';
+
+config();
 
 const SqlDataSource = new DataSource({
     host: "localhost",
     port: 3306,
     username: "root",
-    password: "fatec",
+    password: process.env.DB_PASSWORD,
     database: "simpatech",
     type: "mysql",
     synchronize: false,
