@@ -5,15 +5,15 @@ import { Estacao } from '../entities/Estacao';
 class EstacaoController {
     async criarEstacao(req: Request, res: Response): Promise<void> {
         try {
-            const { Nome, Latitude, Longitude, Data_Instalacao, Tipo_Estacao, Indicativo_Ativa } = req.body;
+            const { Nome, Latitude, Longitude, Data_Instalacao, Tipo_Estacao, Indicativo_Ativa, UID } = req.body;
 
             // Validar os campos
-            if (!Nome || !Latitude || !Longitude || !Data_Instalacao || !Tipo_Estacao) {
+            if (!Nome || !Latitude || !Longitude || !Data_Instalacao || !Tipo_Estacao || !UID) {
                 res.status(400).json({ message: 'Todos os campos são obrigatórios' });
                 return;
             }
 
-            const novaEstacao: Estacao = await createEstacao(Nome, Latitude, Longitude, Data_Instalacao, Tipo_Estacao, Indicativo_Ativa);
+            const novaEstacao: Estacao = await createEstacao(Nome, Latitude, Longitude, Data_Instalacao, Tipo_Estacao, Indicativo_Ativa, UID);
 
             res.status(201).json(novaEstacao);
         } catch (error) {
