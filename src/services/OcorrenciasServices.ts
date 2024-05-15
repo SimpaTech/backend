@@ -2,26 +2,86 @@ import { Ocorrencias } from "../entities/Ocorrencias";
 import SqlDataSource from "../data-source";
 import { Medida } from "../entities/Medida";
 import { Parametro_Alerta } from "../entities/ParametroAlerta";
+import { Parametro } from "../entities/Parametro";
+import { TipoAlerta } from "../entities/TipoAlerta";
 
-async function criarOcorrencia(medidaID: number, parametroAlertaID: number): Promise<Ocorrencias> {
+async function criarOcorrencia(medidaID: number, parametroAlertaID: number): Promise<Ocorrencias | null> {
     const ocorrenciasRepository = SqlDataSource.getRepository(Ocorrencias);
     const medidaRepository = SqlDataSource.getRepository(Medida);
     const parametroAlertaRepository = SqlDataSource.getRepository(Parametro_Alerta);
+    const tipoAlertaRepository = SqlDataSource.getRepository(TipoAlerta);
 
-    const medida = await medidaRepository.findOne({ where: { ID_Medida: medidaID } });
+    const medida = await medidaRepository.findOne({ where: { ID_Medida: medidaID }, relations: ["parametro", "parametro.tipoParametro"] });
     if (!medida) {
         throw new Error('Medida não encontrada');
     }
 
-    const parametroAlerta = await parametroAlertaRepository.findOne({ where: { ID_Parametro_Alerta: parametroAlertaID } });
+    const parametro = medida.parametro;
+    if (!parametro) {
+        throw new Error('Parâmetro não encontrado para a medida');
+    }
+
+    const tipoParametro = parametro.tipoParametro;
+    if (!tipoParametro) {
+        throw new Error('Tipo de parâmetro não encontrado para o parâmetro');
+    }
+
+    const tipoParametroNome = tipoParametro.Nome_Tipo_Parametro;
+
+    const parametroAlerta = await parametroAlertaRepository.findOne({ where: { ID_Parametro_Alerta: parametroAlertaID }, relations: ["tipoAlerta", "parametro"] });
     if (!parametroAlerta) {
         throw new Error('Parâmetro de Alerta não encontrado');
     }
 
+    const tipoAlerta = parametroAlerta.tipoAlerta;
+    if (!tipoAlerta) {
+        throw new Error('Tipo de Alerta não encontrado para o parâmetro de alerta');
+    }
+
+    const { Valor, Operador_Condicional } = tipoAlerta;
+
+    switch (Operador_Condicional) {
+        case "=":
+            if (medida.Valor === Valor) {
+                return criarESalvarOcorrencia(ocorrenciasRepository, medida, parametroAlerta);
+            }
+            break;
+        case "<":
+            if (medida.Valor < Valor) {
+                return criarESalvarOcorrencia(ocorrenciasRepository, medida, parametroAlerta);
+            }
+            break;
+        case ">":
+            if (medida.Valor > Valor) {
+                return criarESalvarOcorrencia(ocorrenciasRepository, medida, parametroAlerta);
+            }
+            break;
+        case "!=":
+            if (medida.Valor !== Valor) {
+                return criarESalvarOcorrencia(ocorrenciasRepository, medida, parametroAlerta);
+            }
+            break;
+        case "<=":
+            if (medida.Valor <= Valor) {
+                return criarESalvarOcorrencia(ocorrenciasRepository, medida, parametroAlerta);
+            }
+            break;
+        case ">=":
+            if (medida.Valor >= Valor) {
+                return criarESalvarOcorrencia(ocorrenciasRepository, medida, parametroAlerta);
+            }
+            break;
+        default:
+            throw new Error('Operador condicional inválido');
+    }
+
+    return null;
+}
+
+async function criarESalvarOcorrencia(ocorrenciasRepository: any, medida: Medida, parametroAlerta: Parametro_Alerta): Promise<Ocorrencias> {
     const ocorrencia = new Ocorrencias();
     ocorrencia.medida = medida;
     ocorrencia.parametro_alerta = parametroAlerta;
-
     return await ocorrenciasRepository.save(ocorrencia);
 }
 
