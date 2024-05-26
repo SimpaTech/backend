@@ -51,7 +51,6 @@ jobs:
       - name: Configurar variáveis de ambiente
         run: |
           echo "JWT_SECRET=sua_chave_secreta_aqui" >> .env
-          echo "MONGODB_URI=mongodb+srv://simpatech2024:JAhW7JjqSfqh1uo0@cluster0.i8dz5y3.mongodb.net/?retryWrites=true&w=majority&ssl=true" >> .env
           echo "DB_PASSWORD=123456" >> .env
 
       - name: Criar tabelas do banco de dados
