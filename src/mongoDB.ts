@@ -11,13 +11,13 @@ if (!uri) {
     throw new Error("A variável de ambiente MONGODB_URI não está definida.");
 }
 
-// const client = new MongoClient(uri);
+const client = new MongoClient(uri);
 // const client = new MongoClient(uri, { ssl: false });
-const client = new MongoClient(uri, {
-    tls: true,
-    tlsAllowInvalidCertificates: true,
-    tlsCAFile: "./node_modules/mongodb-client-encryption/certs/ca.pem"
-  });
+// const client = new MongoClient(uri, {
+//     tls: true,
+//     tlsAllowInvalidCertificates: true,
+//     tlsCAFile: "./node_modules/mongodb-client-encryption/certs/ca.pem"
+//   });
 
 async function connectMongo() {
     try {
