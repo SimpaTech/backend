@@ -1,0 +1,56 @@
+name: CI Backend
+
+on:
+  push:
+    branches:
+      - SIM-127-ci
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: 123456
+          MYSQL_DATABASE: simpatech
+
+    steps:
+      - name: Checar o código
+        uses: actions/checkout@v2
+
+      - name: Setar o Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {30..0}; do
+            if mysqladmin ping -h127.0.0.1 -uroot -p123456 &> /dev/null; then
+              break
+            fi
+            echo 'MySQL still not ready, sleeping...'
+            sleep 1
+          done
+
+      - name: Set up environment variables
+        run: |
+          echo "JWT_SECRET=sua_chave_secreta_aqui" >> .env
+          echo "MONGODB_URI=mongodb+srv://simpatech2024:JAhW7JjqSfqh1uo0@cluster0.i8dz5y3.mongodb.net/?retryWrites=true&w=majority" >> .env
+          echo "DB_PASSWORD=123456" >> .env
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+      - name: Start the application
+        run: npm run start
