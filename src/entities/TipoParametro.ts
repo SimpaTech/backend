@@ -16,6 +16,9 @@ export class TipoParametro extends BaseEntity {
     Unidade: string;
 
     @Column()
+    Json: string;
+
+    @Column()
     Nome_Tipo_Parametro: string;
 
     @Column()

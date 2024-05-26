@@ -1,7 +1,7 @@
 import { TipoParametro } from "../entities/TipoParametro";
 import SqlDataSource from "../data-source";
 
-async function adicionarTipoParametro(Fator: number, Offset: number, Unidade: string, Nome_Tipo_Parametro: string): Promise<TipoParametro> {
+async function adicionarTipoParametro(Fator: number, Offset: number, Unidade: string, Nome_Tipo_Parametro: string, Json: string): Promise<TipoParametro> {
     const tipoParametroRepository = SqlDataSource.getRepository(TipoParametro)
 
     const tipoParametro = new TipoParametro();
@@ -10,6 +10,7 @@ async function adicionarTipoParametro(Fator: number, Offset: number, Unidade: st
     tipoParametro.Unidade = Unidade;
     tipoParametro.Nome_Tipo_Parametro = Nome_Tipo_Parametro;
     tipoParametro.Indicativo_Ativa = true;
+    tipoParametro.Json = Json;
 
     return await tipoParametroRepository.save(tipoParametro);
 }
@@ -51,6 +52,9 @@ async function atualizarTipoParametro(id, data) {
 
     if (data.Fator !== undefined && data.Fator !== "") {
         tipoparametro.Fator = data.Fator;
+    }
+    if (data.Json !== undefined && data.Json !== "") {
+        tipoparametro.Json = data.Json;
     }
 
     await tipoparametro.save()

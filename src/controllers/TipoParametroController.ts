@@ -22,10 +22,13 @@ class TipoParametroController {
             if(!data.Nome_Tipo_Parametro) {
                 return res.json({ message: "Digite um nome do tipo de parâmetro..." }).status(500)
             }
+            if(!data.Json) {
+                return res.json({ message: "Digite o Json para identificar o parâmetro" }).status(500)
+            }
 
             console.log(req.body);
 
-            const novoTipoParametro = adicionarTipoParametro(data.Fator, data.Offset, data.Unidade, data.Nome_Tipo_Parametro);
+            const novoTipoParametro = adicionarTipoParametro(data.Fator, data.Offset, data.Unidade, data.Nome_Tipo_Parametro, data.Json);
             return res.status(200).json({ message: "Cadastrado com sucesso", novoTipoParametro });
         } catch(error) {
             return res.status(500).json({ error: error.message });
