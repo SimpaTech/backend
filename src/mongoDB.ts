@@ -1,8 +1,16 @@
 import { MongoClient } from 'mongodb';
+import { config } from 'dotenv';
+
+config();
 
 const uri = process.env.MONGODB_URI;
 
-const client = new MongoClient(uri);
+if (!uri) {
+    throw new Error("A variável de ambiente MONGODB_URI não está definida.");
+}
+
+// const client = new MongoClient(uri);
+const client = new MongoClient(uri, { ssl: true });
 
 async function connectMongo() {
     try {

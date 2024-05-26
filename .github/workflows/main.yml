@@ -22,6 +22,14 @@ jobs:
       - name: Checar o código
         uses: actions/checkout@v3
 
+      - name: Configurar cache de Node.js
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Setar o Node.js
         uses: actions/setup-node@v3
         with:
@@ -36,14 +44,14 @@ jobs:
             if mysqladmin ping -h127.0.0.1 -uroot -p123456 &> /dev/null; then
               break
             fi
-            echo 'MySQL still not ready, sleeping...'
+            echo 'MySQL ainda não está pronto, dormindo...'
             sleep 1
           done
 
-      - name: Set up environment variables
+      - name: Configurar variáveis de ambiente
         run: |
           echo "JWT_SECRET=sua_chave_secreta_aqui" >> .env
-          echo "MONGODB_URI=mongodb+srv://simpatech2024:JAhW7JjqSfqh1uo0@cluster0.i8dz5y3.mongodb.net/?retryWrites=true&w=majority" >> .env
+          echo "MONGODB_URI=mongodb+srv://simpatech2024:JAhW7JjqSfqh1uo0@cluster0.i8dz5y3.mongodb.net/?retryWrites=true&w=majority&ssl=true" >> .env
           echo "DB_PASSWORD=123456" >> .env
 
       - name: Build project
