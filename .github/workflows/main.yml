@@ -1,7 +1,7 @@
 name: CI Backend
 
 on:
-  commit:
+  push:
     branches:
       - SIM-127-ci
 
