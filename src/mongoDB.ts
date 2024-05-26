@@ -10,7 +10,7 @@ if (!uri) {
 }
 
 // const client = new MongoClient(uri);
-const client = new MongoClient(uri, { ssl: true });
+const client = new MongoClient(uri, { ssl: false });
 
 async function connectMongo() {
     try {
