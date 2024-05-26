@@ -47,8 +47,8 @@ async function seedDatabase() {
         const tipoParametro1 = new TipoParametro();
         tipoParametro1.Fator = 1.0;
         tipoParametro1.Offset = 0.0;
-        tipoParametro1.Unidade = 'Celsius';
-        tipoParametro1.Json = '{}';
+        tipoParametro1.Unidade = 'C';
+        tipoParametro1.Json = 'Temp';
         tipoParametro1.Nome_Tipo_Parametro = 'Temperatura';
         tipoParametro1.Indicativo_Ativa = true;
         await connection.manager.save(tipoParametro1);
@@ -56,8 +56,8 @@ async function seedDatabase() {
         const tipoParametro2 = new TipoParametro();
         tipoParametro2.Fator = 1.0;
         tipoParametro2.Offset = 0.0;
-        tipoParametro2.Unidade = 'Percent';
-        tipoParametro2.Json = '{}';
+        tipoParametro2.Unidade = '%';
+        tipoParametro2.Json = 'Umidade';
         tipoParametro2.Nome_Tipo_Parametro = 'Umidade';
         tipoParametro2.Indicativo_Ativa = true;
         await connection.manager.save(tipoParametro2);
@@ -69,7 +69,7 @@ async function seedDatabase() {
             estacao.Latitude = -23.55052 + i * 0.01;
             estacao.Longitude = -46.633308 + i * 0.01;
             estacao.Data_Instalacao = new Date(`2020-01-${i}`);
-            estacao.Tipo_Estacao = `Tipo ${String.fromCharCode(65 + i)}`;
+            estacao.Tipo_Estacao = `Opção 1`;
             estacao.Indicativo_Ativa = true;
             await connection.manager.save(estacao);
 
