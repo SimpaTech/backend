@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 
 config();
 
-const uri = process.env.MONGODB_URI;
+const uri = "mongodb+srv://simpatech2024:JAhW7JjqSfqh1uo0@cluster0.i8dz5y3.mongodb.net/?retryWrites=true&w=majority";
 
 if (!uri) {
     throw new Error("A variável de ambiente MONGODB_URI não está definida.");

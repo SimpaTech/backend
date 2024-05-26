@@ -6,6 +6,8 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
+const JWT_SECRET = "sua_chave_secreta_aqui"
+
 async function adicionarUsuario(Nome_Usuario: string, CPF_Usuario: string, Senha: string): Promise<Usuario> {
     const usuarioRepository = SqlDataSource.getRepository(Usuario)
 
@@ -108,7 +110,7 @@ async function loginUsuario(data: { CPF_Usuario: string, Senha: string }) {
     // Gerar token JWT usando a chave secreta definida na variável de ambiente
     const token = jwt.sign(
         { id_usuario: checarUsuario.ID_Usuario, role: checarUsuario.Role, tokenId },
-        process.env.JWT_SECRET!, // Usa a chave secreta definida na variável de ambiente
+        JWT_SECRET!, // Usa a chave secreta definida na variável de ambiente
         { expiresIn: '15min' } // Tempo de expiração do token
     );
 
@@ -165,7 +167,7 @@ async function obterInformacoesUsuario(token) {
         }
 
         // Verifica se o token é válido e decodifica suas informações
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
 
         // Verifica se as informações decodificadas incluem o ID do usuário
         if (!decoded.id_usuario) {
