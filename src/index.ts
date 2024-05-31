@@ -3,7 +3,7 @@ import cors from 'cors';
 import SqlDataSource from './data-source';
 import router from './routes';
 import { cadastrarUsuarioPadrao } from './services/UsuarioServices';
-import { connectMongo } from './mongoDB';
+// import { connectMongo } from './mongoDB';
 import TratamentoServices from './services/TratamentoServices';
 import cron from 'node-cron';
 
