@@ -3,7 +3,7 @@ import cors from 'cors';
 import SqlDataSource from './data-source';
 import router from './routes';
 import { cadastrarUsuarioPadrao } from './services/UsuarioServices';
-// import { connectMongo } from './mongoDB';
+import { connectMongo } from './mongoDB';
 import TratamentoServices from './services/TratamentoServices';
 import cron from 'node-cron';
 
@@ -34,16 +34,16 @@ SqlDataSource.initialize()
     .then(() => {
         cadastrarUsuarioPadrao()
             .then(() => {
-                // connectMongo()
-                //     .then(() => {
-                //         app.listen(port, () => {
-                //             console.log(`Servidor está rodando em http://localhost:${port}`);
-                //             iniciarTratamentoMedidas();
-                //         });
-                //     })
-                //     .catch((error) => {
-                //         console.error("Erro ao conectar ao MongoDB Atlas:", error);
-                //     });
+                connectMongo()
+                    .then(() => {
+                        app.listen(port, () => {
+                            console.log(`Servidor está rodando em http://localhost:${port}`);
+                            iniciarTratamentoMedidas();
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao conectar ao MongoDB Atlas:", error);
+                    });
             })
             .catch((error) => {
                 console.error("Erro ao cadastrar o usuário padrão:", error);

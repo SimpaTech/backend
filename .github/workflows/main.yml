@@ -21,6 +21,7 @@ jobs:
     env:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
     steps:
       - name: Checar o código
