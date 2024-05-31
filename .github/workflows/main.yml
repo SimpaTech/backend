@@ -52,7 +52,7 @@ jobs:
           echo "const { MongoClient } = require('mongodb'); const client = new MongoClient(process.env.MONGODB_URI, { tls: true }); client.connect().then(() => { console.log('Conexão bem sucedida'); client.close(); }).catch(err => { console.error('Erro de conexão:', err); });" > test-mongo.js
           node test-mongo.js
 
-      - name: Wait for MySQL to be ready
+      - name: Aguarde até que o MySQL esteja pronto
         run: |
           for i in {30..0}; do
             if mysqladmin ping -h127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} &> /dev/null; then
@@ -68,5 +68,15 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Start the application
-        run: npm run start
+      # - name: Start the application
+      #   run: npm run start
+
+      - name: Inicie a aplicação no background
+        run: |
+          npm run start &
+          sleep 10 # Wait for the server to start
+          curl --retry 10 --retry-delay 5 -v http://localhost:4000 || exit 1
+
+      - name: Pare a aplicação
+        run: |
+          pkill -f "npm run start"
