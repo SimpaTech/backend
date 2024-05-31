@@ -46,6 +46,12 @@ jobs:
       - name: Verificar variáveis de ambiente
         run: echo $MONGODB_URI
 
+      - name: Test MongoDB Connection
+        run: |
+          echo "Testando conexão com o MongoDB..."
+          echo "const { MongoClient } = require('mongodb'); const client = new MongoClient(process.env.MONGODB_URI, { tls: true }); client.connect().then(() => { console.log('Conexão bem sucedida'); client.close(); }).catch(err => { console.error('Erro de conexão:', err); });" > test-mongo.js
+          node test-mongo.js
+
       - name: Wait for MySQL to be ready
         run: |
           for i in {30..0}; do

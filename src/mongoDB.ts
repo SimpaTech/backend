@@ -11,6 +11,7 @@ if (!uri) {
 
 const client = new MongoClient(uri, {
     tls: true,
+    tlsInsecure: true, // Adicione esta opção se precisar ignorar erros de certificado
 });
 
 async function connectMongo() {
