@@ -43,6 +43,9 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
+      - name: Verificar variáveis de ambiente
+        run: echo $MONGODB_URI
+
       - name: Wait for MySQL to be ready
         run: |
           for i in {30..0}; do
