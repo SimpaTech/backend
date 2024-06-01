@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - SIM-127-ci
+  pull_request:
+    branches:
+      - develop
+      - main
 
 jobs:
   build:
