@@ -166,7 +166,7 @@ async function obterInformacoesUsuario(token) {
 
         // Verifica se o token é válido e decodifica suas informações
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+        
         // Verifica se as informações decodificadas incluem o ID do usuário
         if (!decoded.id_usuario) {
             throw new Error('Token inválido: ID do usuário não encontrado');
