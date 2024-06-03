@@ -6,11 +6,12 @@
   "scripts": {
     "start": "nodemon src/index.ts",
     "build": "tsc",
-    "dev": "concurrently \"npm start\" \"cd ../frontend && npm start\" \"typeorm-ts-node-commonjs -d ./src/data-source.ts migration:run && ts-node ./src/scripts/dadosDB.ts\" ",
-    "migration:generate": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:generate ./src/migrations/default",
+    "dev": "concurrently \"npm start\" \"cd ../frontend && npm start\" \" npm run migration:run \" \" npm run dadosDB\" ",
+    "migration:generate": "ts-node ./src/scripts/generate-migration.ts",
     "typeorm": "typeorm-ts-node-commonjs -d ./src/data-source.ts",
     "migration:run": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:run",
-    "migration:revert": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:revert"
+    "migration:revert": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:revert",
+    "dadosDB": "ts-node ./src/scripts/run-dados-db.ts"
   },
   "repository": {
     "type": "git",
