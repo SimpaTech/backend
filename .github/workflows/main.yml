@@ -69,8 +69,8 @@ jobs:
       - name: Criar tabelas do banco de dados
         run: npm run typeorm migration:run
 
-      # - name: Executar Testes
-      #   run: npm test
+      - name: Executar Testes
+        run: npm test
 
       - name: Iniciar a aplicação
         run: |
