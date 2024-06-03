@@ -50,7 +50,7 @@ jobs:
       - name: Verificar variáveis de ambiente
         run: echo $MONGODB_URI
 
-      - name: Test MongoDB Connection
+      - name: Testar Conexão MongoDB
         run: |
           echo "Testando conexão com o MongoDB..."
           echo "const { MongoClient } = require('mongodb'); const client = new MongoClient(process.env.MONGODB_URI, { tls: true }); client.connect().then(() => { console.log('Conexão bem sucedida'); client.close(); }).catch(err => { console.error('Erro de conexão:', err); });" > test-mongo.js
@@ -69,18 +69,15 @@ jobs:
       - name: Criar tabelas do banco de dados
         run: npm run typeorm migration:run
 
-      - name: Build project
-        run: npm run build
+      - name: Executar Testes
+        run: npm test
 
-      # - name: Start the application
-      #   run: npm run start
-
-      - name: Inicie a aplicação no background
+      - name: Iniciar a aplicação
         run: |
           npm run start &
           sleep 10 # Wait for the server to start
           curl --retry 10 --retry-delay 5 -v http://localhost:4000 || exit 1
 
-      - name: Pare a aplicação
+      - name: Parar a aplicação
         run: |
           pkill -f "npm run start"
