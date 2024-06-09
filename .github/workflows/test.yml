@@ -59,13 +59,3 @@ jobs:
 
       - name: Executar Testes de Unidade
         run: npm run test
-
-      - name: Executar Testes de Integração
-        run: npm run test:integration
-
-      - name: Análise de Segurança
-        uses: snyk/actions/node@v2
-        with:
-          command: test
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

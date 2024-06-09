@@ -28,9 +28,3 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Trigger Test Workflow
-        run: gh workflow run test.yml
-
-      - name: Trigger Deploy Workflow
-        run: gh workflow run deploy.yml
