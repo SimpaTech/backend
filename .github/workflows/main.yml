@@ -1,4 +1,4 @@
-name: Build, Test and Deploy
+name: Build, Test e Deploy
 
 on: push
 
@@ -7,15 +7,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checar o código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setar o Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Instalar dependências
         run: npm ci
 
       - name: Build
@@ -40,31 +40,31 @@ jobs:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
     steps:
-      - name: Checkout code
+      - name: Checar o código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setar o Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Instalar dependências
         run: npm ci
 
-      - name: Wait for MySQL to be ready
+      - name: Aguarde até que o MySQL esteja pronto
         run: |
           for i in {30..0}; do
             if mysqladmin ping -h127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} &> /dev/null; then
               break
             fi
-            echo 'MySQL is still not ready, sleeping...'
+            echo 'MySQL ainda não está pronto, dormindo...'
             sleep 1
           done
 
-      - name: Run database migrations
+      - name: Criar tabelas do banco de dados
         run: npm run typeorm migration:run
 
-      - name: Run Unit Tests
+      - name: Rodar os testes
         run: npm run test
 
   deploy:
@@ -72,18 +72,18 @@ jobs:
     needs: test  # Executa após o job de teste ser concluído
 
     steps:
-      - name: Checkout code
+      - name: Checar o código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setar o Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Instalar as dependêncies
         run: npm ci
 
-      - name: Deploy to Production
+      - name: Deploy para Produção
         run: npm run deploy
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}

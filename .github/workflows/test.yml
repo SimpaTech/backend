@@ -58,4 +58,4 @@ jobs:
         run: npm run typeorm migration:run
 
       - name: Executar Testes de Unidade
-        run: npm run test
+        run: npm test
