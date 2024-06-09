@@ -32,7 +32,6 @@ jobs:
       - name: Trigger Test Workflow
         uses: actions/github-script@v4
         with:
-          github-token: ${{ secrets.MEU_TOKEN_PESSOAL }}
           script: |
             const response = await github.actions.createWorkflowDispatch({
               owner: context.repo.owner,

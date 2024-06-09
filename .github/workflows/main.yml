@@ -1,83 +1,93 @@
-# name: CI Backend
+name: Build, Test and Deploy
 
-# on:
-#   push:
-#     branches:
-#       - SIM-127-ci
-#   pull_request:
-#     branches:
-#       - develop
-#       - main
+on:
+  push:
+    branches:
+      - main  # Defina aqui a branch principal onde deseja acionar o workflow
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-#     services:
-#       mysql:
-#         image: mysql:5.7
-#         ports:
-#           - 3306:3306
-#         env:
-#           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#           MYSQL_DATABASE: simpatech
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-#     env:
-#       JWT_SECRET: ${{ secrets.JWT_SECRET }}
-#       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#       MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-#     steps:
-#       - name: Checar o código
-#         uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
 
-#       - name: Configurar cache de Node.js
-#         uses: actions/cache@v4
-#         with:
-#           path: ~/.npm
-#           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-#           restore-keys: |
-#             ${{ runner.os }}-node-
+      - name: Build
+        run: npm run build
 
-#       - name: Setar o Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: '20'
+  test:
+    runs-on: ubuntu-latest
+    needs: build  # Executa após o job de build ser concluído
 
-#       - name: Instalar dependências
-#         run: npm ci
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: simpatech
 
-#       - name: Verificar variáveis de ambiente
-#         run: echo $MONGODB_URI
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
-#       - name: Testar Conexão MongoDB
-#         run: |
-#           echo "Testando conexão com o MongoDB..."
-#           echo "const { MongoClient } = require('mongodb'); const client = new MongoClient(process.env.MONGODB_URI, { tls: true }); client.connect().then(() => { console.log('Conexão bem sucedida'); client.close(); }).catch(err => { console.error('Erro de conexão:', err); });" > test-mongo.js
-#           node test-mongo.js
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-#       - name: Aguarde até que o MySQL esteja pronto
-#         run: |
-#           for i in {30..0}; do
-#             if mysqladmin ping -h127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} &> /dev/null; then
-#               break
-#             fi
-#             echo 'MySQL ainda não está pronto, dormindo...'
-#             sleep 1
-#           done
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-#       - name: Criar tabelas do banco de dados
-#         run: npm run typeorm migration:run
+      - name: Install dependencies
+        run: npm ci
 
-#       # - name: Executar Testes
-#       #   run: npm test
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {30..0}; do
+            if mysqladmin ping -h127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} &> /dev/null; then
+              break
+            fi
+            echo 'MySQL is still not ready, sleeping...'
+            sleep 1
+          done
 
-#       - name: Iniciar a aplicação
-#         run: |
-#           npm run start &
-#           sleep 10 # Wait for the server to start
-#           curl --retry 10 --retry-delay 5 -v http://localhost:4000 || exit 1
+      - name: Run database migrations
+        run: npm run typeorm migration:run
 
-#       - name: Parar a aplicação
-#         run: |
-#           pkill -f "npm run start"
+      - name: Run Unit Tests
+        run: npm run test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test  # Executa após o job de teste ser concluído
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy to Production
+        run: npm run deploy
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          OTHER_ENV_VAR: ${{ secrets.OTHER_ENV_VAR }}
