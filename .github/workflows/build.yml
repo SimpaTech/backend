@@ -28,3 +28,15 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Trigger Test Workflow
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: { id } } = await github.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'test.yml'
+            });
+            console.log(`Triggered Test Workflow Run ID: ${id}`);

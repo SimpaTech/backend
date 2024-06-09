@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   workflow_run:
-    workflows: ["Test"]
+    workflows: ["test.yml"]
     types:
       - completed
 
@@ -11,18 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checar o código
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setar o Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Instalar dependências
+      - name: Install dependencies
         run: npm ci
 
-      - name: Deploy para Produção
+      - name: Deploy to Production
         run: npm run deploy
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
