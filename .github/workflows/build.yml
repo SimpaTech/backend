@@ -28,9 +28,3 @@ jobs:
 
       - name: Build
         run: npm run build
-            const { data: { id } } = await github.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'test.yml'
-            });
-            console.log(`Triggered Test Workflow Run ID: ${id}`);
