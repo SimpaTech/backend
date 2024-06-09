@@ -1,83 +1,83 @@
-name: CI Backend
+# name: CI Backend
 
-on:
-  push:
-    branches:
-      - SIM-127-ci
-  pull_request:
-    branches:
-      - develop
-      - main
+# on:
+#   push:
+#     branches:
+#       - SIM-127-ci
+#   pull_request:
+#     branches:
+#       - develop
+#       - main
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:5.7
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DATABASE: simpatech
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         ports:
+#           - 3306:3306
+#         env:
+#           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#           MYSQL_DATABASE: simpatech
 
-    env:
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+#     env:
+#       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+#       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#       MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
-    steps:
-      - name: Checar o código
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checar o código
+#         uses: actions/checkout@v4
 
-      - name: Configurar cache de Node.js
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+#       - name: Configurar cache de Node.js
+#         uses: actions/cache@v4
+#         with:
+#           path: ~/.npm
+#           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#           restore-keys: |
+#             ${{ runner.os }}-node-
 
-      - name: Setar o Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+#       - name: Setar o Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '20'
 
-      - name: Instalar dependências
-        run: npm ci
+#       - name: Instalar dependências
+#         run: npm ci
 
-      - name: Verificar variáveis de ambiente
-        run: echo $MONGODB_URI
+#       - name: Verificar variáveis de ambiente
+#         run: echo $MONGODB_URI
 
-      - name: Testar Conexão MongoDB
-        run: |
-          echo "Testando conexão com o MongoDB..."
-          echo "const { MongoClient } = require('mongodb'); const client = new MongoClient(process.env.MONGODB_URI, { tls: true }); client.connect().then(() => { console.log('Conexão bem sucedida'); client.close(); }).catch(err => { console.error('Erro de conexão:', err); });" > test-mongo.js
-          node test-mongo.js
+#       - name: Testar Conexão MongoDB
+#         run: |
+#           echo "Testando conexão com o MongoDB..."
+#           echo "const { MongoClient } = require('mongodb'); const client = new MongoClient(process.env.MONGODB_URI, { tls: true }); client.connect().then(() => { console.log('Conexão bem sucedida'); client.close(); }).catch(err => { console.error('Erro de conexão:', err); });" > test-mongo.js
+#           node test-mongo.js
 
-      - name: Aguarde até que o MySQL esteja pronto
-        run: |
-          for i in {30..0}; do
-            if mysqladmin ping -h127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} &> /dev/null; then
-              break
-            fi
-            echo 'MySQL ainda não está pronto, dormindo...'
-            sleep 1
-          done
+#       - name: Aguarde até que o MySQL esteja pronto
+#         run: |
+#           for i in {30..0}; do
+#             if mysqladmin ping -h127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} &> /dev/null; then
+#               break
+#             fi
+#             echo 'MySQL ainda não está pronto, dormindo...'
+#             sleep 1
+#           done
 
-      - name: Criar tabelas do banco de dados
-        run: npm run typeorm migration:run
+#       - name: Criar tabelas do banco de dados
+#         run: npm run typeorm migration:run
 
-      # - name: Executar Testes
-      #   run: npm test
+#       # - name: Executar Testes
+#       #   run: npm test
 
-      - name: Iniciar a aplicação
-        run: |
-          npm run start &
-          sleep 10 # Wait for the server to start
-          curl --retry 10 --retry-delay 5 -v http://localhost:4000 || exit 1
+#       - name: Iniciar a aplicação
+#         run: |
+#           npm run start &
+#           sleep 10 # Wait for the server to start
+#           curl --retry 10 --retry-delay 5 -v http://localhost:4000 || exit 1
 
-      - name: Parar a aplicação
-        run: |
-          pkill -f "npm run start"
+#       - name: Parar a aplicação
+#         run: |
+#           pkill -f "npm run start"
