@@ -3,7 +3,7 @@ import { Estacao } from "../entities/Estacao";
 import SqlDataSource from "../data-source";
 import { Parametro_Alerta } from '../entities/ParametroAlerta';
 
-async function createEstacao(Nome: string, Latitude: number, Longitude: number, UID:string): Promise<Estacao> {
+async function createEstacao(Nome: string, Latitude: number, Longitude: number, Data_Instalacao: Date, Tipo_Estacao: string, Indicativo_Ativa: boolean, UID:string): Promise<Estacao> {
     const estacaoRepository = SqlDataSource.getRepository(Estacao)
 
     const estacao = new Estacao();
@@ -11,6 +11,9 @@ async function createEstacao(Nome: string, Latitude: number, Longitude: number, 
     estacao.Nome = Nome;
     estacao.Latitude = Latitude;
     estacao.Longitude = Longitude;
+    estacao.Data_Instalacao = Data_Instalacao;
+    estacao.Tipo_Estacao = Tipo_Estacao;
+    estacao.Indicativo_Ativa = true;
 
     return await estacaoRepository.save(estacao);
 }
@@ -40,7 +43,16 @@ async function editarEstacao(ID_Estacao: number, dadosAtualizados: {
     if (dadosAtualizados.Longitude !== undefined) {
         estacaoExistente.Longitude = dadosAtualizados.Longitude;
     }
-    
+    if (dadosAtualizados.Data_Instalacao !== undefined) {
+        estacaoExistente.Data_Instalacao = dadosAtualizados.Data_Instalacao;
+    }
+    if (dadosAtualizados.Tipo_Estacao !== undefined && dadosAtualizados.Tipo_Estacao !== "") {
+        estacaoExistente.Tipo_Estacao = dadosAtualizados.Tipo_Estacao;
+    }
+    if (dadosAtualizados.Indicativo_Ativa !== undefined) {
+        estacaoExistente.Indicativo_Ativa = dadosAtualizados.Indicativo_Ativa;
+    }
+
     await estacaoRepository.save(estacaoExistente);
 
     return estacaoExistente;
@@ -96,7 +108,7 @@ async function listarTodasEstacoes(): Promise<Estacao[]> {
 async function listarTodasEstacoesAtivas(): Promise<Estacao[] | null> {
     const estacaoRepository = SqlDataSource.getRepository(Estacao);
     try {
-        const estacoesAtivas = await estacaoRepository.find();
+        const estacoesAtivas = await estacaoRepository.find({ where: { Indicativo_Ativa: true } });
         return estacoesAtivas;
     } catch (error) {
         return null;
@@ -111,6 +123,8 @@ async function alternarStatusEstacao(ID_Estacao: number): Promise<{ success: boo
         if (!estacaoExistente) {
             throw new Error('Estação não encontrada'); 
         }
+
+        estacaoExistente.Indicativo_Ativa = !estacaoExistente.Indicativo_Ativa;
 
         await estacaoRepository.save(estacaoExistente);
 
