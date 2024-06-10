@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class V1001717355634856 implements MigrationInterface {
-    name = 'V1001717355634856'
+export class V1001717988755059 implements MigrationInterface {
+    name = 'V1001717988755059'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE \`usuario\` (\`ID_Usuario\` int NOT NULL AUTO_INCREMENT, \`Nome_Usuario\` varchar(255) NOT NULL, \`CPF_Usuario\` varchar(255) NOT NULL, \`Role\` varchar(255) NOT NULL, \`Senha\` varchar(255) NOT NULL, \`Token\` varchar(255) NULL, UNIQUE INDEX \`IDX_e8e6a306e71b43e9921f911e36\` (\`CPF_Usuario\`), PRIMARY KEY (\`ID_Usuario\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`estacao\` (\`ID_Estacao\` int NOT NULL AUTO_INCREMENT, \`UID\` varchar(255) NOT NULL, \`Nome\` varchar(255) NOT NULL, \`Latitude\` float NOT NULL, \`Longitude\` float NOT NULL, \`Data_Instalacao\` datetime NOT NULL, \`Tipo_Estacao\` varchar(255) NOT NULL, \`Indicativo_Ativa\` tinyint NOT NULL, UNIQUE INDEX \`IDX_d83e8a26ffa29755faefaf0c05\` (\`UID\`), PRIMARY KEY (\`ID_Estacao\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`estacao\` (\`ID_Estacao\` int NOT NULL AUTO_INCREMENT, \`UID\` varchar(255) NOT NULL, \`Nome\` varchar(255) NOT NULL, \`Latitude\` float NOT NULL, \`Longitude\` float NOT NULL, UNIQUE INDEX \`IDX_d83e8a26ffa29755faefaf0c05\` (\`UID\`), PRIMARY KEY (\`ID_Estacao\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`medida\` (\`ID_Medida\` int NOT NULL AUTO_INCREMENT, \`UnixTime\` int NOT NULL, \`Valor\` float NOT NULL, \`parametroIDParametro\` int NULL, PRIMARY KEY (\`ID_Medida\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`tipo_alerta\` (\`ID_Tipo_Alerta\` int NOT NULL AUTO_INCREMENT, \`Nome_Tipo_Alerta\` varchar(255) NOT NULL, \`Valor\` float NOT NULL, \`Operador_Condicional\` varchar(255) NOT NULL, \`Indicativo_Ativa\` tinyint NOT NULL, PRIMARY KEY (\`ID_Tipo_Alerta\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`parametro_alerta\` (\`ID_Parametro_Alerta\` int NOT NULL AUTO_INCREMENT, \`parametroIDParametro\` int NULL, \`tipoAlertaIDTipoAlerta\` int NULL, PRIMARY KEY (\`ID_Parametro_Alerta\`)) ENGINE=InnoDB`);

@@ -18,15 +18,6 @@ export class Estacao {
     @Column("float")
     Longitude: number;
 
-    @Column()
-    Data_Instalacao: Date;
-
-    @Column()
-    Tipo_Estacao: string;
-
-    @Column()
-    Indicativo_Ativa: boolean;
-
     @OneToMany(() => Parametro, parametro => parametro.estacao)
     parametros: Parametro[];
 }
