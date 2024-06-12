@@ -68,7 +68,7 @@ async function seedDatabase() {
             estacao.Nome = `Estação ${i}`;
             estacao.Latitude = -23.55052 + i * 0.01;
             estacao.Longitude = -46.633308 + i * 0.01;
-            estacao.Data_Instalacao = new Date(`2020-01-${i}`);
+            estacao.Data_Instalacao = new Date();
             estacao.Tipo_Estacao = `Estação Terrestre`;
             estacao.Indicativo_Ativa = true;
             await connection.manager.save(estacao);
