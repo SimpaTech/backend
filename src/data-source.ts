@@ -18,7 +18,7 @@ const SqlDataSource = new DataSource({
     password: process.env.DB_PASSWORD,
     database: "simpatech",
     type: "mysql",
-    synchronize: false,
+    synchronize: true,
     logging: false,
     entities: [
         Usuario,

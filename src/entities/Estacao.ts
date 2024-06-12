@@ -26,7 +26,7 @@ export class Estacao {
 
     @Column()
     Indicativo_Ativa: boolean;
-
+    
     @OneToMany(() => Parametro, parametro => parametro.estacao)
     parametros: Parametro[];
 }
