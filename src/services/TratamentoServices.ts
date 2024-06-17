@@ -61,7 +61,7 @@ class TratamentoServices {
                         console.log("id tipo parametroooo", tipoParametro.ID_Tipo_Parametro)
 
                         const parametrob = await parametroRepository.findOne({
-                            where: { tipoParametro: { ID_Tipo_Parametro: tipoParametro.ID_Tipo_Parametro } }
+                            where: { tipoParametro: { ID_Tipo_Parametro: tipoParametro.ID_Tipo_Parametro }, estacao: {ID_Estacao: estacao.ID_Estacao } }
                         });
                         // const parametro = await parametroRepository.findOne({ where: { tipoParametro: tipoParametro.ID_Tipo_Parametro } });
 

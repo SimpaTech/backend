@@ -110,6 +110,7 @@ async function listarTodasOcorrencias(): Promise<Ocorrencias[]> {
         .leftJoinAndSelect("ocorrencia.parametro_alerta", "parametro_alerta")
         .leftJoinAndSelect("parametro_alerta.parametro", "parametro")
         .leftJoinAndSelect("parametro.tipoParametro", "tipo_parametro")
+        .leftJoinAndSelect("parametro.estacao", "estacao")
         .orderBy("ocorrencia.ID_Ocorrencia", "ASC")
         .getMany();
 }

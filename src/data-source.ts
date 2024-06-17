@@ -1,4 +1,12 @@
 import { DataSource } from "typeorm";
+import { Usuario } from "./entities/Usuario";
+import { TipoParametro } from "./entities/TipoParametro";
+import { TipoAlerta } from "./entities/TipoAlerta";
+import { Parametro_Alerta } from "./entities/ParametroAlerta";
+import { Parametro } from "./entities/Parametro";
+import { Ocorrencias } from "./entities/Ocorrencias";
+import { Medida } from "./entities/Medida";
+import { Estacao } from "./entities/Estacao";
 import { config } from 'dotenv';
 
 config();
@@ -10,9 +18,18 @@ const SqlDataSource = new DataSource({
     password: process.env.DB_PASSWORD,
     database: "simpatech",
     type: "mysql",
-    synchronize: false,
+    synchronize: true,
     logging: false,
-    entities: ["src/entities/*.ts"],
+    entities: [
+        Usuario,
+        TipoParametro,
+        TipoAlerta,
+        Parametro_Alerta,
+        Parametro,
+        Ocorrencias,
+        Medida,
+        Estacao
+    ],
     migrations: ["src/migrations/*.ts"],
 });
 

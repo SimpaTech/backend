@@ -24,8 +24,8 @@ async function iniciarTratamentoMedidas() {
     await TratamentoServices.processarMedidas();
 }
 
-// Agenda a execução do tratamento das medidas a cada 15 minutos
-cron.schedule('*/15 * * * *', async () => {
+// Agenda a execução do tratamento das medidas a cada 1 minuto
+cron.schedule('*/1 * * * *', async () => {
     console.log('Executando o tratamento das medidas...');
     await iniciarTratamentoMedidas();
 });
