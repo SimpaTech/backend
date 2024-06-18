@@ -6,7 +6,7 @@ on:
             - develop
             - main
     workflow_run:
-              workflows: ["Build and Test"]
+              workflows: ["Build e Test"]
               types:
                 - completed
 jobs:
