@@ -67,24 +67,24 @@ jobs:
       - name: Rodar os testes
         run: npm run test
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: test  # Executa após o job de teste ser concluído
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the files
+      uses: actions/checkout@v3
 
-  #   steps:
-  #     - name: Checar o código
-  #       uses: actions/checkout@v4
-
-  #     - name: Setar o Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: '20'
-
-  #     - name: Instalar as dependêncies
-  #       run: npm ci
-
-  #     - name: Deploy para Produção
-  #       run: npm run deploy
-  #       env:
-  #         DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-  #         OTHER_ENV_VAR: ${{ secrets.OTHER_ENV_VAR }}
+    - name: Copy files with SSH
+      uses: easingthemes/ssh-deploy@main
+      env:
+        SSH_PRIVATE_KEY: ${{secrets.EC2_SSH_KEY}}
+        ARGS: "-rltgoDzvO --delete"
+        SOURCE: "./"
+        REMOTE_HOST: ${{secrets.REMOTE_HOST}}
+        REMOTE_USER: ${{secrets.REMOTE_USER}}
+        EXCLUDE: "/dist/, /node_modules/, **.env, rebuild_app.sh, watcher.sh"
+        SCRIPT_BEFORE: |
+          ls
+        SCRIPT_AFTER: |
+          npm install
+          sh deploy.sh
